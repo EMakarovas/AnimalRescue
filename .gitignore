@@ -1,0 +1,13 @@
+.g8/
+.settings/
+bin/
+gradle/
+logs/
+project/
+target/
+.cache-main
+.classpath
+.project
+build.gradle
+gradlew
+gradlew.bat
