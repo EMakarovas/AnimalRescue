@@ -1,15 +1,13 @@
 package com.emakarovas.animalrescue.controllers
 
-
-
 import scala.concurrent.Future
-
-import com.emakarovas.animalrescue.persistence.mongo.Mongo
 
 import javax.inject._
 import play.api._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
+
+import com.emakarovas.animalrescue.persistence.dao.PersonDao
 import com.emakarovas.animalrescue.model.PersonModel
 
 /**
@@ -17,7 +15,7 @@ import com.emakarovas.animalrescue.model.PersonModel
  * application's home page.
  */
 @Singleton
-class HomeController @Inject() (mongo: Mongo) extends Controller {
+class HomeController @Inject() (personDao: PersonDao) extends Controller {
 
   /**
    * Create an Action to render an HTML page.
@@ -27,7 +25,8 @@ class HomeController @Inject() (mongo: Mongo) extends Controller {
    * a path of `/`.
    */
   def index = Action { implicit request =>
-    mongo.createPerson(new PersonModel("id", "EDGARAS", "MAKAROVAS"))
+    personDao.create(new PersonModel("id", "EDGARAS", "MAKAROVAS"));
+    personDao.create(new PersonModel("", "EDGARAS", "MAKAROVAS"));
     Ok(views.html.index())
   }
   
