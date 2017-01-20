@@ -12,6 +12,8 @@ import play.api.libs.json.Json
 import reactivemongo.bson.BSONDocumentWriter
 import play.api.libs.json.JsObject
 import reactivemongo.bson.Macros
+import reactivemongo.api.Cursor
+
 
 @Singleton
 class DefaultPersonDAO @Inject() (
