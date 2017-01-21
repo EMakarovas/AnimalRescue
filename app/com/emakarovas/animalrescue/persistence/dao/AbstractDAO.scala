@@ -8,7 +8,7 @@ import reactivemongo.api.commands.WriteResult
 trait AbstractDAO[T<:AbstractModel] {
   def findById(id: String): Future[Option[T]]
   def findAll(): Future[List[T]]
-  def create(model: T): Future[WriteResult]
-  def update(model: T): Future[WriteResult]
-  def delete(model: T): Future[WriteResult]
+  def create(model: T): Future[Int]
+  def update(model: T): Future[Int]
+  def deleteById(id: String): Future[Int]
 }

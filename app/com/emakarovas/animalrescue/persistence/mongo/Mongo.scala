@@ -15,43 +15,15 @@ import reactivemongo.bson.BSONDocumentWriter
 import reactivemongo.bson.Macros
 import reactivemongo.bson.document
 
-
-
-
-/**
- * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
- */
 @Singleton
-class Mongo @Inject() {
+class Mongo @Inject() (configuration: play.api.Configuration) {
 
-  val MongoUri = "mongodb://localhost:27017"
-  val DatabaseName = "animalrescue";
+  import scala.concurrent.ExecutionContext.Implicits.global
 
-  import scala.concurrent.ExecutionContext.Implicits.global // use any appropriate context
-
-  // Connect to the database: Must be done only once per application
   val driver = MongoDriver()
-  val parsedUri = MongoConnection.parseURI(MongoUri)
+  val parsedUri = MongoConnection.parseURI(configuration.underlying.getString("mongo.uri"))
   val connection = parsedUri.map(driver.connection(_))
-
-  // Database and collections: Get references
   val futureConnection = Future.fromTry(connection)
-  def db: Future[DefaultDB] = futureConnection.flatMap(_.database(DatabaseName))
-  def personCollection = db.map(_.collection("person"))
+  def db: Future[DefaultDB] = futureConnection.flatMap(_.database(configuration.underlying.getString("mongo.databaseName")))
 
-  // Write Documents: insert or update
-  
-
-
-
-  // TODO sort this
-  implicit def personReader: BSONDocumentReader[PersonModel] = Macros.reader[PersonModel]
-  // or provide a custom one
-
-  def findPersonByAge(age: Int): Future[List[PersonModel]] =
-    personCollection.flatMap(_.find(document("age" -> age)). // query builder
-      cursor[PersonModel]().collect[List]()) // collect using the result cursor
-      // ... deserializes the document using personReader
-  
 }

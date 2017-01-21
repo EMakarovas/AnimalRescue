@@ -16,3 +16,5 @@ libraryDependencies += "org.reactivemongo" % "play2-reactivemongo_2.11" % "0.12.
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "com.emakarovas.binders._"
+
+javaOptions in Test += "-Dconfig.file=conf/application.test.conf"

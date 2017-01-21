@@ -17,30 +17,30 @@ import reactivemongo.api.Cursor
 
 @Singleton
 class DefaultPersonDAO @Inject() (
-    mongo: Mongo, 
+    val mongo: Mongo, 
     implicit val personWriter: PersonWriter,
     implicit val personReader: PersonReader) extends PersonDAO {
   
   import scala.concurrent.ExecutionContext.Implicits.global
   val collection = mongo.db.map(_.collection("person"))
   
-  def findById(id: String) = {
+  override def findById(id: String) = {
     val query = BSONDocument("_id" -> id)
     collection.flatMap(_.find(query).one)
   }
   
-  def findAll() = collection.flatMap(_.find(BSONDocument(), BSONDocument()).cursor[PersonModel]().collect[List]())
+  override def findAll() = collection.flatMap(_.find(BSONDocument(), BSONDocument()).cursor[PersonModel]().collect[List]())
   
-  def create(person: PersonModel) = collection.flatMap(_.insert(person)) // use personWriter
+  override def create(person: PersonModel) = collection.flatMap(_.insert(person)).map(writeRes => writeRes.n)
   
-  def update(person: PersonModel) = {
+  override def update(person: PersonModel) = {
     val selector = BSONDocument("_id" -> person.id)
-    collection.flatMap(_.update(selector, person))
+    collection.flatMap(_.update(selector, person)).map(writeRes => writeRes.n)
   }
   
-  def delete(person: PersonModel) = {
-    val selector = BSONDocument("_id" -> person.id)
-    collection.flatMap(_.remove(selector))
+  override def deleteById(id: String) = {
+    val selector = BSONDocument("_id" -> id)
+    collection.flatMap(_.remove(selector)).map(writeRes => writeRes.n)
   }
   
 }
