@@ -57,20 +57,6 @@ class DefaultPersonDAOSpec extends PlaySpec with OneAppPerTest {
           await(listFuture)
           listFuture onComplete {
             case Success(list) => list.contains(person1) mustBe true; list.contains(person2) mustBe true
-//              
-//              {println(list(0)==person1 + " " + list(1)==person2); println(list +" "+person1+" "+person2); 
-//            println(list(0))
-//            println(person1)
-//            println(list(0)==person1)
-//            println(list(1))
-//            println(person2)
-//            println(list(1)==person2)
-//            println(list.contains(person1))
-//            println(list.contains(person2))
-//            println(list.contains(person1, person2))
-//            
-//            list.contains(person1) mustBe true
-//            }
             case Failure(t) => fail("failed to retrieve list of persons " + t)
           }
         }

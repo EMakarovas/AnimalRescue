@@ -1,0 +1,8 @@
+package com.emakarovas.animalrescue.persistence.mongo
+
+sealed trait MongoCollectionType
+
+case object AnimalModelCollectionType extends MongoCollectionType
+case object PersonModelCollectionType extends MongoCollectionType
+case object UserModelCollectionType extends MongoCollectionType
+case object UserPersonRelationshipCollectionType extends MongoCollectionType

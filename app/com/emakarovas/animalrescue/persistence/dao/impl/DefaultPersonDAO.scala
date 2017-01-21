@@ -13,16 +13,17 @@ import reactivemongo.bson.BSONDocumentWriter
 import play.api.libs.json.JsObject
 import reactivemongo.bson.Macros
 import reactivemongo.api.Cursor
-
+import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
+import com.emakarovas.animalrescue.persistence.mongo.PersonModelCollectionType
 
 @Singleton
 class DefaultPersonDAO @Inject() (
-    val mongo: Mongo, 
+    colFactory: MongoCollectionFactory,
     implicit val personWriter: PersonWriter,
     implicit val personReader: PersonReader) extends PersonDAO {
   
   import scala.concurrent.ExecutionContext.Implicits.global
-  val collection = mongo.db.map(_.collection("person"))
+  private val collection = colFactory.getCollection(PersonModelCollectionType)
   
   override def findById(id: String) = {
     val query = BSONDocument("_id" -> id)
