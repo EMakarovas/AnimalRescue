@@ -15,7 +15,7 @@ class MongoCollectionFactory @Inject() (
   private val AnimalColName = getColName("animalModel")
   private val PersonColName = getColName("personModel")
   private val UserColName = getColName("userModel")
-  private val UserPersonRelColName = getColName("userPersonRelationship")
+  private val User2PersonRelColName = getColName("user2PersonRelationship")
   
   import scala.concurrent.ExecutionContext.Implicits.global
   
@@ -24,7 +24,7 @@ class MongoCollectionFactory @Inject() (
       case AnimalModelCollectionType => getCollection(AnimalColName)
       case PersonModelCollectionType => getCollection(PersonColName)
       case UserModelCollectionType => getCollection(UserColName)
-      case UserPersonRelationshipCollectionType => getCollection(UserPersonRelColName)
+      case User2PersonRelationshipCollectionType => getCollection(User2PersonRelColName)
     }
   }
 

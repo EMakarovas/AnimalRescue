@@ -5,4 +5,4 @@ sealed trait MongoCollectionType
 case object AnimalModelCollectionType extends MongoCollectionType
 case object PersonModelCollectionType extends MongoCollectionType
 case object UserModelCollectionType extends MongoCollectionType
-case object UserPersonRelationshipCollectionType extends MongoCollectionType
+case object User2PersonRelationshipCollectionType extends MongoCollectionType

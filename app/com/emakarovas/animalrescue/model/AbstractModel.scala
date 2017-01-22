@@ -1,4 +1,4 @@
 package com.emakarovas.animalrescue.model
 
-abstract class AbstractModel(id: String) {
+abstract class AbstractModel(override val id: String) extends AbstractEntity(id){
 }
