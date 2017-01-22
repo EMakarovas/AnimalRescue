@@ -6,6 +6,7 @@ import reactivemongo.bson.BSONDocumentWriter
 import reactivemongo.bson.BSONDocumentReader
 import com.emakarovas.animalrescue.model.PersonModel
 import reactivemongo.bson.BSONDocument
+import reactivemongo.api.Cursor
 
 trait AbstractDAO[T] {
   
@@ -20,7 +21,9 @@ trait AbstractDAO[T] {
     collection.flatMap(_.find(query).one)
   }
   
-  def findAll(): Future[List[T]] = collection.flatMap(_.find(BSONDocument(), BSONDocument()).cursor[T]().collect[List]())
+  def findAll(): Future[List[T]] = {
+    collection.flatMap(_.find(BSONDocument()).cursor[T]().collect[List](Int.MaxValue, Cursor.FailOnError[List[T]]()))
+  }
   
   def create(obj: T): Future[Int] = collection.flatMap(_.insert(obj)).map(writeRes => writeRes.n)
   

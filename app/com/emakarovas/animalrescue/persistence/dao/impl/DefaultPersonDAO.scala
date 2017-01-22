@@ -19,10 +19,5 @@ class DefaultPersonDAO @Inject() (
   
   import scala.concurrent.ExecutionContext.Implicits.global
   val collection = colFactory.getCollection(PersonModelCollectionType)
-      
-  override def update(person: PersonModel) = {
-    val selector = BSONDocument("_id" -> person.id)
-    collection.flatMap(_.update(selector, person)).map(writeRes => writeRes.n)
-  }
   
 }

@@ -5,5 +5,5 @@ import com.emakarovas.animalrescue.util.IdGenerator
 
 @Singleton
 class DefaultIdGenerator @Inject() extends IdGenerator {
-  def generate() = java.util.UUID.randomUUID().toString()
+  def generate() = java.util.UUID.randomUUID.toString
 }
