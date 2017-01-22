@@ -1,6 +1,7 @@
 package com.emakarovas.animalrescue.model.common
 
-class Gender extends Enumeration {
+object Gender extends Enumeration {
+  type Gender = Value
   val Male,
   Female,
   Unspecified = Value

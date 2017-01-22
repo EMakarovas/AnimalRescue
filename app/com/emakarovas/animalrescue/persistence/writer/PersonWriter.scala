@@ -14,6 +14,7 @@ class PersonWriter extends BSONDocumentWriter[PersonModel] {
     BSONDocument(
         "_id" -> person.id,
         "name" -> person.name,
-        "surname" -> person.surname)
+        "surname" -> person.surname,
+        "gender" -> person.gender.toString())
   }
 }

@@ -1,6 +1,6 @@
 package com.emakarovas.animalrescue.persistence.dao.impl
 
-import org.scalatestplus.play.OneAppPerTest
+import org.scalatestplus.play.OneAppPerSuite
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers
 import org.scalatestplus.play._
@@ -11,19 +11,22 @@ import com.emakarovas.animalrescue.model.PersonModel
 import javax.inject.Inject
 import scala.util.Failure
 import scala.util.Success
+import com.emakarovas.animalrescue.model.common.Gender
 
-class DefaultPersonDAOSpec extends PlaySpec with OneAppPerTest {
+class DefaultPersonDAOSpec extends PlaySpec with OneAppPerSuite {
   
   val PersonId = "test id"
   val PersonName = "test name"
   val PersonSurname = "test surname"
+  val PersonGender = Gender.Male
   val updatedPersonName = "updated test name"
   val Person2Id = "test id2"
   val Person2Name = "test name2"
   val Person2Surname = "test surname2"
-  val person1 = new PersonModel(PersonId, PersonName, PersonSurname)
-  val person2 = new PersonModel(Person2Id, Person2Name, Person2Surname)
-  val updatedPerson1 = new PersonModel(PersonId, updatedPersonName, PersonSurname)
+  val Person2Gender = Gender.Female
+  val person1 = new PersonModel(PersonId, PersonName, PersonSurname, PersonGender)
+  val person2 = new PersonModel(Person2Id, Person2Name, Person2Surname, Person2Gender)
+  val updatedPerson1 = new PersonModel(PersonId, updatedPersonName, PersonSurname, PersonGender)
   lazy val defaultPersonDAO: DefaultPersonDAO = app.injector.instanceOf[DefaultPersonDAO]
   
   import scala.concurrent.ExecutionContext.Implicits.global
