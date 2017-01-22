@@ -1,15 +1,13 @@
 package com.emakarovas.animalrescue.persistence.dao.impl
 
-import com.emakarovas.animalrescue.model.PersonModel
 import com.emakarovas.animalrescue.persistence.dao.PersonDAO
-import com.emakarovas.animalrescue.persistence.mongo.Mongo
-import com.emakarovas.animalrescue.persistence.writer.PersonWriter
-import com.emakarovas.animalrescue.persistence.reader.PersonReader
-
-import javax.inject._
-import reactivemongo.bson.BSONDocument
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.PersonModelCollectionType
+import com.emakarovas.animalrescue.persistence.reader.PersonReader
+import com.emakarovas.animalrescue.persistence.writer.PersonWriter
+
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class DefaultPersonDAO @Inject() (
@@ -17,7 +15,6 @@ class DefaultPersonDAO @Inject() (
     implicit val writer: PersonWriter,
     implicit val reader: PersonReader) extends PersonDAO {
   
-  import scala.concurrent.ExecutionContext.Implicits.global
-  val collection = colFactory.getCollection(PersonModelCollectionType)
+ val collection = colFactory.getCollection(PersonModelCollectionType)
   
 }

@@ -5,11 +5,9 @@ import com.emakarovas.animalrescue.model.common.Gender
 
 import javax.inject.Singleton
 import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONDocumentReader
-import com.emakarovas.animalrescue.model.common.Gender
 
 @Singleton
-class PersonReader extends BSONDocumentReader[PersonModel] {
+class PersonReader extends AbstractModelReader[PersonModel] {
   def read(doc: BSONDocument): PersonModel = {
     val id = doc.getAs[String]("_id").get
     val name = doc.getAs[String]("name").get

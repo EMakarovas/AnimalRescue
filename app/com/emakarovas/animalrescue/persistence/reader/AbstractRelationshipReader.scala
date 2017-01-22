@@ -1,12 +1,9 @@
 package com.emakarovas.animalrescue.persistence.reader
 
-import com.emakarovas.animalrescue.model.PersonModel
-
-import reactivemongo.bson.BSONDocumentReader
-import javax.inject.Singleton
-import reactivemongo.bson.BSONDocument
-import com.emakarovas.animalrescue.model.relationship.User2PersonRelationship
 import com.emakarovas.animalrescue.model.relationship.AbstractRelationship
+
+import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.BSONDocumentReader
 
 abstract class AbstractRelationshipReader[T <: AbstractRelationship[_, _]] extends BSONDocumentReader[T] {
   

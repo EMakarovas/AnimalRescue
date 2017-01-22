@@ -1,6 +1,9 @@
 package com.emakarovas.animalrescue.model.animal
 
-class AnimalType extends Enumeration {
+import com.emakarovas.animalrescue.model.common.ModelEnumeration
+
+object AnimalType extends ModelEnumeration {
+  type AnimalType = Value
   val Dog, 
   Cat, 
   Rat, 

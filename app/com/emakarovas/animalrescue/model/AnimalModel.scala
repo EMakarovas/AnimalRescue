@@ -5,7 +5,7 @@ import com.emakarovas.animalrescue.model.common.Gender
 
 case class AnimalModel
   (override val id: String,
-   animalType: AnimalType,
+   animalType: AnimalType.Value,
    specificType: Option[String],
    name: Option[String],
    gender: Gender.Value,

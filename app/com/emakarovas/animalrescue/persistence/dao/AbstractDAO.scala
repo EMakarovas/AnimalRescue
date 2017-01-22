@@ -1,12 +1,12 @@
 package com.emakarovas.animalrescue.persistence.dao
 
 import scala.concurrent.Future
-import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.BSONDocumentWriter
-import reactivemongo.bson.BSONDocumentReader
-import com.emakarovas.animalrescue.model.PersonModel
-import reactivemongo.bson.BSONDocument
+
 import reactivemongo.api.Cursor
+import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.BSONDocumentReader
+import reactivemongo.bson.BSONDocumentWriter
 
 trait AbstractDAO[T] {
   
@@ -18,6 +18,7 @@ trait AbstractDAO[T] {
   
   def findById(id: String): Future[Option[T]] = {
     val query = BSONDocument("_id" -> id)
+    println(BSONDocument.pretty(query))
     collection.flatMap(_.find(query).one)
   }
   

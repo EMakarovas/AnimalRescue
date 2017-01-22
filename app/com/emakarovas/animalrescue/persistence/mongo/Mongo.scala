@@ -1,17 +1,12 @@
 package com.emakarovas.animalrescue.persistence.mongo
 
 import scala.concurrent.Future
-import scala.util.Failure
-import scala.util.Success
 
-import javax.inject._
+import javax.inject.Inject
+import javax.inject.Singleton
 import reactivemongo.api.DefaultDB
 import reactivemongo.api.MongoConnection
 import reactivemongo.api.MongoDriver
-import reactivemongo.bson.BSONDocumentReader
-import reactivemongo.bson.BSONDocumentWriter
-import reactivemongo.bson.Macros
-import reactivemongo.bson.document
 
 @Singleton
 class Mongo @Inject() (configuration: play.api.Configuration) {

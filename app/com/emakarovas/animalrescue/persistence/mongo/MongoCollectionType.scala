@@ -3,6 +3,16 @@ package com.emakarovas.animalrescue.persistence.mongo
 sealed trait MongoCollectionType
 
 final case object AnimalModelCollectionType extends MongoCollectionType
+final case object CommentModelCollectionType extends MongoCollectionType
+final case object CostModelCollectionType extends MongoCollectionType
+final case object GeolocationModelCollectionType extends MongoCollectionType
 final case object PersonModelCollectionType extends MongoCollectionType
+final case object PostingModelCollectionType extends MongoCollectionType
 final case object UserModelCollectionType extends MongoCollectionType
+
+final case object Posting2AnimalRelationshipCollectionType extends MongoCollectionType
+final case object Posting2CommentRelationshipCollectionType extends MongoCollectionType
+final case object Posting2CostRelationshipCollectionType extends MongoCollectionType
+final case object Posting2GeolocationRelationshipCollectionType extends MongoCollectionType
 final case object User2PersonRelationshipCollectionType extends MongoCollectionType
+final case object User2PostingRelationshipCollectionType extends MongoCollectionType

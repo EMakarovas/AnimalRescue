@@ -94,6 +94,7 @@ class DefaultPersonDAOSpec extends PlaySpec with OneAppPerSuite {
           await(existingPersonListFuture)
           existingPersonListFuture onComplete {
             case Success(list) => {
+              list.contains(person1) mustBe false
               list.contains(person2) mustBe true
               val deleteFuture2 = defaultPersonDAO.deleteById(Person2Id)
               await(deleteFuture2)
