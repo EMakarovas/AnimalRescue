@@ -1,19 +1,18 @@
 package com.emakarovas.animalrescue.persistence.dao.impl
 
-import org.scalatestplus.play.OneAppPerSuite
-import org.scalatestplus.play.PlaySpec
-import play.api.test.Helpers
-import org.scalatestplus.play._
-import play.api.test._
-import play.api.test.Helpers._
-
-import com.emakarovas.animalrescue.model.PersonModel
-import javax.inject.Inject
 import scala.util.Failure
 import scala.util.Success
-import com.emakarovas.animalrescue.model.common.Gender
 
-class DefaultPersonDAOSpec extends PlaySpec with OneAppPerSuite {
+import org.scalatestplus.play.OneAppPerSuite
+
+import com.emakarovas.animalrescue.model.PersonModel
+import com.emakarovas.animalrescue.model.common.Gender
+import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
+
+import play.api.test.Helpers.await
+import play.api.test.Helpers.defaultAwaitTimeout
+
+class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   
   val PersonId = "test id"
   val PersonName = "test name"
@@ -43,6 +42,7 @@ class DefaultPersonDAOSpec extends PlaySpec with OneAppPerSuite {
     }
     
     "find the correct PersonModel from the DB when find is called" in {
+      delay
       val retrievedPerson = defaultPersonDAO.findById(PersonId)
       await(retrievedPerson)
       retrievedPerson onComplete {
@@ -52,6 +52,7 @@ class DefaultPersonDAOSpec extends PlaySpec with OneAppPerSuite {
     }
     
     "find the list of all PersonModels when findAll is called" in {
+      delay
       val saveFuture = defaultPersonDAO.create(person2)
       await(saveFuture)
       saveFuture onComplete {
@@ -68,6 +69,7 @@ class DefaultPersonDAOSpec extends PlaySpec with OneAppPerSuite {
     }
     
     "update a person when update is called" in {
+      delay
       val updateFuture = defaultPersonDAO.update(updatedPerson1)
       await(updateFuture)
       updateFuture onComplete {
@@ -85,6 +87,7 @@ class DefaultPersonDAOSpec extends PlaySpec with OneAppPerSuite {
     }
     
     "delete a person when deleteById is called" in {
+      delay
       val deleteFuture = defaultPersonDAO.deleteById(PersonId)
       await(deleteFuture)
       deleteFuture onComplete {

@@ -18,7 +18,6 @@ trait AbstractDAO[T] {
   
   def findById(id: String): Future[Option[T]] = {
     val query = BSONDocument("_id" -> id)
-    println(BSONDocument.pretty(query))
     collection.flatMap(_.find(query).one)
   }
   

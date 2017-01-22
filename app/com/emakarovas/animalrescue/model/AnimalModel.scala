@@ -9,7 +9,7 @@ case class AnimalModel
    specificType: Option[String],
    name: Option[String],
    gender: Gender.Value,
-   age: Option[Int], // this is stored as months
+   age: Option[Int], // stored as months
    description: Option[String])
    extends AbstractModel(id) {
   
