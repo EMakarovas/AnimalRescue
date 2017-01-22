@@ -13,11 +13,11 @@ import com.emakarovas.animalrescue.persistence.mongo.User2PersonRelationshipColl
 @Singleton
 class DefaultUser2PersonRelationshipDAO @Inject() (
     colFactory: MongoCollectionFactory,
-    implicit val user2PersonRelationshipWriter: User2PersonRelationshipWriter,
-    implicit val user2PersonRelationshipReader: User2PersonRelationshipReader) extends User2PersonRelationshipDAO {
+    implicit val writer: User2PersonRelationshipWriter,
+    implicit val reader: User2PersonRelationshipReader) extends User2PersonRelationshipDAO {
   
   import scala.concurrent.ExecutionContext.Implicits.global
-  private val collection = colFactory.getCollection(User2PersonRelationshipCollectionType)
+  val collection = colFactory.getCollection(User2PersonRelationshipCollectionType)
   
   override def create(rel: User2PersonRelationship) = collection.flatMap(_.insert(rel)).map(writeRes => writeRes.n)
   

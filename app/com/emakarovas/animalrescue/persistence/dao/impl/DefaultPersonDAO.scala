@@ -4,44 +4,25 @@ import com.emakarovas.animalrescue.model.PersonModel
 import com.emakarovas.animalrescue.persistence.dao.PersonDAO
 import com.emakarovas.animalrescue.persistence.mongo.Mongo
 import com.emakarovas.animalrescue.persistence.writer.PersonWriter
+import com.emakarovas.animalrescue.persistence.reader.PersonReader
 
 import javax.inject._
 import reactivemongo.bson.BSONDocument
-import com.emakarovas.animalrescue.persistence.reader.PersonReader
-import play.api.libs.json.Json
-import reactivemongo.bson.BSONDocumentWriter
-import play.api.libs.json.JsObject
-import reactivemongo.bson.Macros
-import reactivemongo.api.Cursor
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.PersonModelCollectionType
 
 @Singleton
 class DefaultPersonDAO @Inject() (
     colFactory: MongoCollectionFactory,
-    implicit val personWriter: PersonWriter,
-    implicit val personReader: PersonReader) extends PersonDAO {
+    implicit val writer: PersonWriter,
+    implicit val reader: PersonReader) extends PersonDAO {
   
   import scala.concurrent.ExecutionContext.Implicits.global
-  private val collection = colFactory.getCollection(PersonModelCollectionType)
-  
-  override def findById(id: String) = {
-    val query = BSONDocument("_id" -> id)
-    collection.flatMap(_.find(query).one)
-  }
-  
-  override def findAll() = collection.flatMap(_.find(BSONDocument(), BSONDocument()).cursor[PersonModel]().collect[List]())
-  
-  override def create(person: PersonModel) = collection.flatMap(_.insert(person)).map(writeRes => writeRes.n)
-  
+  val collection = colFactory.getCollection(PersonModelCollectionType)
+      
   override def update(person: PersonModel) = {
     val selector = BSONDocument("_id" -> person.id)
     collection.flatMap(_.update(selector, person)).map(writeRes => writeRes.n)
-  }
-  
-  override def deleteById(id: String) = {
-    val selector = BSONDocument("_id" -> id)
-    collection.flatMap(_.remove(selector)).map(writeRes => writeRes.n)
   }
   
 }
