@@ -6,7 +6,7 @@ import scala.util.Success
 import org.scalatestplus.play.OneAppPerSuite
 
 import com.emakarovas.animalrescue.model.CostModel
-import com.emakarovas.animalrescue.model.cost.CostType
+import com.emakarovas.animalrescue.model.enumeration.CostType
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 
 import play.api.test.Helpers.await

@@ -6,7 +6,7 @@ import scala.util.Success
 import org.scalatestplus.play.OneAppPerSuite
 
 import com.emakarovas.animalrescue.model.PersonModel
-import com.emakarovas.animalrescue.model.common.Gender
+import com.emakarovas.animalrescue.model.enumeration.Gender
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 
 import play.api.test.Helpers.await

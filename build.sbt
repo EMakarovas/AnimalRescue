@@ -9,7 +9,7 @@ scalaVersion := "2.11.8"
 
 libraryDependencies += filters
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
-libraryDependencies += "org.reactivemongo" % "play2-reactivemongo_2.11" % "0.12.1-play24"
+libraryDependencies += "org.reactivemongo" %% "play2-reactivemongo" % "0.12.1"
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.emakarovas.controllers._"

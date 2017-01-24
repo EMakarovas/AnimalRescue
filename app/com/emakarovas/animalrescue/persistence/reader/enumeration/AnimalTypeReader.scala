@@ -1,6 +1,6 @@
 package com.emakarovas.animalrescue.persistence.reader.enumeration
 
-import com.emakarovas.animalrescue.model.animal.AnimalType
+import com.emakarovas.animalrescue.model.enumeration.AnimalType
 
 import javax.inject.Singleton
 import reactivemongo.bson.BSONReader
@@ -8,8 +8,8 @@ import reactivemongo.bson.BSONString
 import reactivemongo.bson.BSONValue
 
 @Singleton
-class AnimalTypeReader extends BSONReader[BSONValue, AnimalType.Value] {
-  def read(bson: BSONValue): AnimalType.Value =
+class AnimalTypeReader extends BSONReader[BSONValue, AnimalType] {
+  def read(bson: BSONValue): AnimalType =
     bson match {
       case BSONString("Bird") => AnimalType.Bird
       case BSONString("Cat") => AnimalType.Cat
