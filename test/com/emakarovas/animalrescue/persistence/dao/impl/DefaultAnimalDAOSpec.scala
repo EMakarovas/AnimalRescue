@@ -58,7 +58,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val retrievedAnimal = defaultAnimalDAO.findById(Animal1Id)
       await(retrievedAnimal)
       retrievedAnimal onComplete {
-        case Success(option) => println(animal1); println(option.get); option.get mustBe animal1
+        case Success(option) => option.get mustBe animal1
         case Failure(t) => fail("failed to retrieve the AnimalModel " + t)
       }
     }
@@ -78,7 +78,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val retrievedAnimal = defaultAnimalDAO.findById(Animal2Id)
       await(retrievedAnimal)
       retrievedAnimal onComplete {
-        case Success(option) => println(option); option.get mustBe animal2; option.get.description mustBe None
+        case Success(option) => option.get mustBe animal2; option.get.description mustBe None
         case Failure(t) => fail("failed to retrieve the AnimalModel " + t)
       }
     }
@@ -88,7 +88,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val listFuture = defaultAnimalDAO.findAll()
       await(listFuture)
       listFuture onComplete {
-        case Success(list) => println(list); list.contains(animal1) mustBe true; list.contains(animal2) mustBe true
+        case Success(list) => list.contains(animal1) mustBe true; list.contains(animal2) mustBe true
         case Failure(t) => fail("failed to retrieve list of AnimalModels " + t)
       }
     }
@@ -103,7 +103,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           val updatedAnimalFuture = defaultAnimalDAO.findById(Animal2Id)
           await(updatedAnimalFuture)
           updatedAnimalFuture onComplete {
-            case Success(animalOption) => println(animalOption); animalOption.get.name mustBe Animal2NameUpdated
+            case Success(animalOption) => animalOption.get.name mustBe Animal2NameUpdated
             case Failure(t) => fail("failed to retrieve updated AnimalModel " + t)
           }
         }
@@ -123,7 +123,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           existingAnimalListFuture onComplete {
             case Success(list) => {
               list.contains(animal1) mustBe false
-              list.contains(animal2) mustBe true
+              list.contains(updatedAnimal) mustBe true
               val deleteFuture2 = defaultAnimalDAO.deleteById(Animal2Id)
               await(deleteFuture2)
               deleteFuture2 onComplete {

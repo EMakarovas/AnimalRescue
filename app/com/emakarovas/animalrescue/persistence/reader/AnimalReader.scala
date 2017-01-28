@@ -11,24 +11,23 @@ import reactivemongo.bson.BSONDocument
 import com.emakarovas.animalrescue.persistence.reader.enumeration.GenderReader
 import reactivemongo.bson.BSONInteger
 import reactivemongo.bson.BSONString
+import com.emakarovas.animalrescue.persistence.reader.option.IntOptionReader
+import com.emakarovas.animalrescue.persistence.reader.option.StringOptionReader
 
 @Singleton
 class AnimalReader @Inject() 
   (implicit var animalTypeReader: AnimalTypeReader,
-   implicit var genderReader: GenderReader) extends AbstractModelReader[AnimalModel] {
+   implicit var genderReader: GenderReader,
+   implicit var intOptionReader: IntOptionReader,
+   implicit var stringOptionReader: StringOptionReader) extends AbstractModelReader[AnimalModel] {
   def read(doc: BSONDocument): AnimalModel = {
-    println(doc.get("specificType"))
-    println(doc.get("name"))
-    println(doc.getAsTry[String]("name"))
     val id = doc.getAs[String]("_id").get
     val animalType = doc.getAs[AnimalType]("animalType").get
     val specificTypeOpt = doc.getAs[String]("specificType")
     val nameOpt = doc.getAs[String]("name")
     val gender = doc.getAs[Gender]("gender").get
     val ageOpt = doc.getAs[Int]("age")
-    val descriptionOpt = doc.getAs[BSONString]("description").map(desc => desc.value)
-    println("######################################")
-    println(ageOpt)
+    val descriptionOpt = doc.getAs[String]("description")
     AnimalModel(id, animalType, specificTypeOpt, nameOpt, gender, ageOpt, descriptionOpt)
   }
 }

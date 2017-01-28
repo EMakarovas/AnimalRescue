@@ -18,7 +18,5 @@ class DefaultUser2PersonRelationshipDAO @Inject() (
   
   import scala.concurrent.ExecutionContext.Implicits.global
   val collection = colFactory.getCollection(User2PersonRelationshipCollectionType)
-  
-  override def create(rel: User2PersonRelationship) = collection.flatMap(_.insert(rel)).map(writeRes => writeRes.n)
-  
+
 }
