@@ -1,6 +1,5 @@
 package com.emakarovas.animalrescue.persistence.dao.impl
 
-import com.emakarovas.animalrescue.model.relationship.User2PersonRelationship
 import com.emakarovas.animalrescue.persistence.dao.User2PersonRelationshipDAO
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.User2PersonRelationshipCollectionType
@@ -16,7 +15,6 @@ class DefaultUser2PersonRelationshipDAO @Inject() (
     implicit val writer: User2PersonRelationshipWriter,
     implicit val reader: User2PersonRelationshipReader) extends User2PersonRelationshipDAO {
   
-  import scala.concurrent.ExecutionContext.Implicits.global
-  val collection = colFactory.getCollection(User2PersonRelationshipCollectionType)
+ val collection = colFactory.getCollection(User2PersonRelationshipCollectionType)
 
 }

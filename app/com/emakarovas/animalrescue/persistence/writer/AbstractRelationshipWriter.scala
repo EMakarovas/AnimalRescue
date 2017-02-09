@@ -4,7 +4,6 @@ import com.emakarovas.animalrescue.model.relationship.AbstractRelationship
 
 import reactivemongo.bson.BSONDocument
 import reactivemongo.bson.BSONDocumentWriter
-import reactivemongo.bson.BSONElement.converted
 
 abstract class AbstractRelationshipWriter[T <: AbstractRelationship[_, _]] extends BSONDocumentWriter[T] {
   def write(rel: T): BSONDocument = {

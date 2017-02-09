@@ -11,6 +11,8 @@ import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 import play.api.test.Helpers.await
 import play.api.test.Helpers.defaultAwaitTimeout
 import net.sourceforge.htmlunit.corejs.javascript.Token.CommentType
+import java.util.Calendar
+import java.util.Date
 
 class DefaultCommentDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   
@@ -18,14 +20,10 @@ class DefaultCommentDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   val Comment1Date = new java.util.Date()
   val Comment1Text = "comment 1 text"
   val Comment2Id = "comment2 id"
-  val Comment2Date = new java.util.Date()
-  Comment2Date.setHours(0)
-  Comment2Date.setMinutes(0)
+  val Comment2Date = buildDate(5, 6, 2010);
   val Comment2Text = "comment 2 text"
 
-  val Comment1DateUpdated = new java.util.Date()
-  Comment1DateUpdated.setHours(5)
-  Comment1DateUpdated.setMinutes(5)
+  val Comment1DateUpdated = buildDate(1, 2, 2011);
   
   val comment1 = new CommentModel(Comment1Id, Comment1Date, Comment1Text)
   val comment2 = new CommentModel(Comment2Id, Comment2Date, Comment2Text)
@@ -125,6 +123,14 @@ class DefaultCommentDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       }
     }
     
+  }
+  
+  def buildDate(day: Int, month: Int, year: Int): Date = {
+    val cal = Calendar.getInstance
+    cal.set(Calendar.DAY_OF_MONTH, day);
+    cal.set(Calendar.MONTH, month);
+    cal.set(Calendar.YEAR, year);
+    cal.getTime
   }
 
 }

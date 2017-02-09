@@ -4,7 +4,6 @@ import com.emakarovas.animalrescue.model.PersonModel
 
 import javax.inject.Singleton
 import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONElement.converted
 
 @Singleton
 class PersonWriter extends AbstractModelWriter[PersonModel] {

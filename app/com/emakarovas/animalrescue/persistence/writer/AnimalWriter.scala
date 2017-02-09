@@ -1,22 +1,17 @@
 package com.emakarovas.animalrescue.persistence.writer
 
 import com.emakarovas.animalrescue.model.AnimalModel
+import com.emakarovas.animalrescue.persistence.writer.enumeration.AnimalTypeWriter
+import com.emakarovas.animalrescue.persistence.writer.enumeration.GenderWriter
 
+import javax.inject.Inject
 import javax.inject.Singleton
 import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONElement.converted
-import com.emakarovas.animalrescue.persistence.writer.enumeration.GenderWriter
-import com.emakarovas.animalrescue.persistence.writer.enumeration.AnimalTypeWriter
-import javax.inject.Inject
-import com.emakarovas.animalrescue.persistence.writer.option.IntOptionWriter
-import com.emakarovas.animalrescue.persistence.writer.option.StringOptionWriter
 
 @Singleton
 class AnimalWriter @Inject() (
     implicit val animalTypeWriter: AnimalTypeWriter,
-    implicit val genderWriter: GenderWriter,
-    implicit val intOptionWriter: IntOptionWriter,
-    implicit val stringOptionWriter: StringOptionWriter) extends AbstractModelWriter[AnimalModel] {
+    implicit val genderWriter: GenderWriter) extends AbstractModelWriter[AnimalModel] {
 
   override def write(animal: AnimalModel): BSONDocument = {
     BSONDocument(

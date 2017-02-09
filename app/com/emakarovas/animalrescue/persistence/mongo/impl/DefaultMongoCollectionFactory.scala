@@ -22,6 +22,9 @@ import com.emakarovas.animalrescue.persistence.mongo.UserModelCollectionType
 import javax.inject.Inject
 import javax.inject.Singleton
 import reactivemongo.api.collections.bson.BSONCollection
+import com.emakarovas.animalrescue.persistence.mongo.Animal2ImageRelationshipCollectionType
+import com.emakarovas.animalrescue.persistence.mongo.Person2ImageRelationshipCollectionType
+import com.emakarovas.animalrescue.persistence.mongo.ImageModelCollectionType
 
 @Singleton
 class DefaultMongoCollectionFactory @Inject() (
@@ -32,10 +35,13 @@ class DefaultMongoCollectionFactory @Inject() (
   private val CommentColName = getColName("commentModel")
   private val CostColName = getColName("costModel")
   private val GeolocationColName = getColName("geolocationModel")
+  private val ImageColName = getColName("imageModel")
   private val PersonColName = getColName("personModel")
   private val PostingColName = getColName("postingModel")
   private val UserColName = getColName("userModel")
   
+  private val Animal2ImageRelColName = getColName("animal2ImageRelationship")
+  private val Person2ImageRelColName = getColName("person2ImageRelationship")
   private val Posting2AnimalRelColName = getColName("posting2AnimalRelationship")
   private val Posting2CommentRelColName = getColName("posting2CommentRelationship")
   private val Posting2CostRelColName = getColName("posting2CostRelationship")
@@ -51,9 +57,12 @@ class DefaultMongoCollectionFactory @Inject() (
       case CommentModelCollectionType => getCollection(CommentColName)
       case CostModelCollectionType => getCollection(CostColName)
       case GeolocationModelCollectionType => getCollection(GeolocationColName)
+      case ImageModelCollectionType => getCollection(ImageColName)
       case PersonModelCollectionType => getCollection(PersonColName)
       case PostingModelCollectionType => getCollection(PostingColName)
       case UserModelCollectionType => getCollection(UserColName)
+      case Animal2ImageRelationshipCollectionType => getCollection(Animal2ImageRelColName)
+      case Person2ImageRelationshipCollectionType => getCollection(Person2ImageRelColName)
       case Posting2AnimalRelationshipCollectionType => getCollection(Posting2AnimalRelColName)
       case Posting2CommentRelationshipCollectionType => getCollection(Posting2CommentRelColName)
       case Posting2CostRelationshipCollectionType => getCollection(Posting2CostRelColName)
