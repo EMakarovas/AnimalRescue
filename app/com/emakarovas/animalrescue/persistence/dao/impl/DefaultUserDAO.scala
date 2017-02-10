@@ -8,6 +8,9 @@ import com.emakarovas.animalrescue.persistence.writer.UserWriter
 
 import javax.inject.Inject
 import javax.inject.Singleton
+import scala.concurrent.Future
+import com.emakarovas.animalrescue.model.UserModel
+import reactivemongo.bson.BSONDocument
 
 @Singleton
 class DefaultUserDAO @Inject() (
@@ -15,6 +18,13 @@ class DefaultUserDAO @Inject() (
     implicit val writer: UserWriter,
     implicit val reader: UserReader) extends UserDAO {
   
- val collection = colFactory.getCollection(UserModelCollectionType)
+  import scala.concurrent.ExecutionContext.Implicits.global
+  
+  val collection = colFactory.getCollection(UserModelCollectionType)
+ 
+  override def findByEmail(email: String): Future[Option[UserModel]] = {
+    val selector = BSONDocument("email" -> email)
+    collection.flatMap(_.find(selector).one)
+  }
   
 }

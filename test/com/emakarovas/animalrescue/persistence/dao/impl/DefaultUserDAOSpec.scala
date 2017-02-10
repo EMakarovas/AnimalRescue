@@ -51,6 +51,16 @@ class DefaultUserDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       }
     }
     
+    "find the correct UserModel from the DB when findByEmail is called" in {
+      delay
+      val retrievedUser = defaultUserDAO.findByEmail(User1Email)
+      await(retrievedUser)
+      retrievedUser onComplete {
+        case Success(option) => option.get mustBe user1
+        case Failure(t) => fail("failed to retrieve the UserModel " + t)
+      }
+    }
+    
     "find the list of all UserModels when findAll is called" in {
       delay
       val saveFuture = defaultUserDAO.create(user2)

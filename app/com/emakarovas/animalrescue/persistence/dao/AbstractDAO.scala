@@ -17,31 +17,19 @@ trait AbstractDAO[T] {
   import scala.concurrent.ExecutionContext.Implicits.global
   
   def findById(id: String): Future[Option[T]] = {
-//    Future {
-//      None
-//    }
     val query = BSONDocument("_id" -> id)
     collection.flatMap(_.find(query).one)
   }
   
   def findAll(): Future[List[T]] = {
-//    Future {
-//      List()
-//    }
     collection.flatMap(_.find(BSONDocument()).cursor[T]().collect[List](Int.MaxValue, Cursor.FailOnError[List[T]]()))
   }
   
   def create(obj: T): Future[Int] = {
-//    Future {
-//      1
-//    }
     collection.flatMap(_.insert(obj)).map(writeRes => writeRes.n)
   }
   
   def deleteById(id: String): Future[Int] = {
-//    Future {
-//      1
-//    }
     val selector = BSONDocument("_id" -> id)
     collection.flatMap(_.remove(selector)).map(writeRes => writeRes.n)
   }
