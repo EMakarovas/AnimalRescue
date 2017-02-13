@@ -5,15 +5,24 @@ import com.emakarovas.animalrescue.model.PostingModel
 import javax.inject.Singleton
 import reactivemongo.bson.BSONDocument
 import java.util.Date
+import javax.inject.Inject
+import com.emakarovas.animalrescue.model.GeolocationModel
+import com.emakarovas.animalrescue.model.CostModel
 
 @Singleton
-class PostingReader extends AbstractModelReader[PostingModel] {
+class PostingReader @Inject() (
+    implicit val costReader: CostReader,
+    implicit val geolocationReader: GeolocationReader) extends AbstractModelReader[PostingModel] {
   
   def read(doc: BSONDocument): PostingModel = {
     val id = doc.getAs[String]("_id").get
-    val date = doc.getAs[Date]("date").get
+    val startDate = doc.getAs[Date]("startDate").get
+    val endDate = doc.getAs[Date]("endDate")
     val text = doc.getAs[String]("text").get
-    PostingModel(id, date, text)
+    val cost = doc.getAs[CostModel]("cost").get
+    val geolocation = doc.getAs[GeolocationModel]("geolocation").get
+    val userId = doc.getAs[String]("userId").get
+    PostingModel(id, startDate, endDate, text, cost, geolocation, userId)
   }
 }
 

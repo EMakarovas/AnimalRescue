@@ -10,9 +10,9 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class CostReader @Inject() 
-  (implicit costTypeReader: CostTypeReader) extends AbstractModelReader[CostModel] {
+  (implicit val costTypeReader: CostTypeReader) extends AbstractModelReader[CostModel] {
   
-  def read(doc: BSONDocument): CostModel = {
+  override def read(doc: BSONDocument): CostModel = {
     val id = doc.getAs[String]("_id").get
     val costType = doc.getAs[CostType]("costType").get
     val amount = doc.getAs[Double]("amount").get

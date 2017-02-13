@@ -8,7 +8,7 @@ import reactivemongo.bson.BSONString
 import reactivemongo.bson.BSONValue
 
 @Singleton
-class AnimalTypeReader extends BSONReader[BSONValue, AnimalType] {
+class AnimalTypeReader extends EnumerationReader[AnimalType] {
   def read(bson: BSONValue): AnimalType =
     bson match {
       case BSONString("Bird") => AnimalType.Bird

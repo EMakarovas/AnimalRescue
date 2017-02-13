@@ -6,7 +6,9 @@ case class PersonModel
   (override val id: String,
    name: String, 
    surname: String,
-   gender: Gender) 
+   gender: Gender,
+   image: Option[ImageModel],
+   userId: String) 
    extends AbstractModel(id) {
   
 }

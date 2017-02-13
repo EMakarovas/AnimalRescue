@@ -4,8 +4,12 @@ import java.util.Date
 
 case class PostingModel
   (override val id: String,
-   date: Date,
-   text: String)
+   startDate: Date,
+   endDate: Option[Date],
+   text: String,
+   cost: CostModel,
+   geolocation: GeolocationModel,
+   userId: String)
    extends AbstractModel(id) {
   
 }

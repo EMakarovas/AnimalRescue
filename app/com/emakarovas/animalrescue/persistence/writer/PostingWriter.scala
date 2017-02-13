@@ -2,15 +2,22 @@ package com.emakarovas.animalrescue.persistence.writer
 
 import com.emakarovas.animalrescue.model.PostingModel
 
+import javax.inject.Inject
 import javax.inject.Singleton
 import reactivemongo.bson.BSONDocument
 
 @Singleton
-class PostingWriter extends AbstractModelWriter[PostingModel] {
+class PostingWriter @Inject() (
+    implicit val costWriter: CostWriter,
+    implicit val geolocationWriter: GeolocationWriter) extends AbstractModelWriter[PostingModel] {
   override def write(posting: PostingModel): BSONDocument = {
     BSONDocument(
         "_id" -> posting.id,
-        "date" -> posting.date,
-        "text" -> posting.text)
+        "startDate" -> posting.startDate,
+        "endDate" -> posting.endDate,
+        "text" -> posting.text,
+        "cost" -> posting.cost,
+        "geolocation" -> posting.geolocation,
+        "userId" -> posting.userId)
   }
 }

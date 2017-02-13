@@ -8,6 +8,9 @@ import com.emakarovas.animalrescue.persistence.writer.PersonWriter
 
 import javax.inject.Inject
 import javax.inject.Singleton
+import scala.concurrent.Future
+import com.emakarovas.animalrescue.model.PersonModel
+import reactivemongo.bson.BSONDocument
 
 @Singleton
 class DefaultPersonDAO @Inject() (
@@ -15,6 +18,13 @@ class DefaultPersonDAO @Inject() (
     implicit val writer: PersonWriter,
     implicit val reader: PersonReader) extends PersonDAO {
   
- val collection = colFactory.getCollection(PersonModelCollectionType)
+  val collection = colFactory.getCollection(PersonModelCollectionType)
+  
+  import scala.concurrent.ExecutionContext.Implicits.global
+ 
+  override def findByUserId(userId: String): Future[Option[PersonModel]] = {
+    val selector = BSONDocument("userId" -> userId)
+    collection.flatMap(_.find(selector).one)
+  }
   
 }
