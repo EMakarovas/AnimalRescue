@@ -2,12 +2,11 @@ package com.emakarovas.animalrescue.controllers
 
 import scala.concurrent.Future
 
-
-
-import javax.inject._
-import play.api._
+import javax.inject.Singleton
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.mvc._
+import play.api.mvc.Action
+import play.api.mvc.Controller
+import javax.inject.Inject
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -23,7 +22,7 @@ class HomeController @Inject() () extends Controller {
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def index = Action { implicit request =>
+  def index = Action { implicit request => 
     Ok(views.html.index())
   }
   

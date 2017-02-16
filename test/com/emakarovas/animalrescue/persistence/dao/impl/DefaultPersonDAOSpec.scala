@@ -11,6 +11,7 @@ import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 
 import play.api.test.Helpers.await
 import play.api.test.Helpers.defaultAwaitTimeout
+import com.emakarovas.animalrescue.model.ImageModel
 
 class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   
@@ -18,14 +19,18 @@ class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   val PersonName = "test name"
   val PersonSurname = "test surname"
   val PersonGender = Gender.Male
+  val PersonImage = Some(ImageModel("img id", "url"))
+  val PersonUserId = "user id"
   val updatedPersonName = "updated test name"
   val Person2Id = "test id2"
   val Person2Name = "test name2"
   val Person2Surname = "test surname2"
   val Person2Gender = Gender.Female
-  val person1 = new PersonModel(PersonId, PersonName, PersonSurname, PersonGender)
-  val person2 = new PersonModel(Person2Id, Person2Name, Person2Surname, Person2Gender)
-  val updatedPerson1 = new PersonModel(PersonId, updatedPersonName, PersonSurname, PersonGender)
+  val Person2Image = None
+  val Person2UserId = "user 2 id"
+  val person1 = PersonModel(PersonId, PersonName, PersonSurname, PersonGender, PersonImage, PersonUserId)
+  val person2 = PersonModel(Person2Id, Person2Name, Person2Surname, Person2Gender, Person2Image, Person2UserId)
+  val updatedPerson1 = PersonModel(PersonId, updatedPersonName, PersonSurname, PersonGender, PersonImage, PersonUserId)
   lazy val defaultPersonDAO: DefaultPersonDAO = app.injector.instanceOf[DefaultPersonDAO]
   
   import scala.concurrent.ExecutionContext.Implicits.global
@@ -65,6 +70,16 @@ class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           }
         }
         case Failure(t) => fail("failed to save second person in DB " + t)
+      }
+    }
+    
+    "find the correct PersonModel from the DB when findByUserId is called" in {
+      delay
+      val retrievedPerson = defaultPersonDAO.findByUserId(PersonUserId)
+      await(retrievedPerson)
+      retrievedPerson onComplete {
+        case Success(option) => option.get mustBe person1
+        case Failure(t) => fail("failed to retrieve the person " + t)
       }
     }
     

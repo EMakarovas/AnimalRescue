@@ -23,8 +23,8 @@ class DefaultMongoCollectionFactory @Inject() (
   
   private val PersonColName = getColName("personModel")
   private val PostingColName = getColName("postingModel")
-  private val PostingAnimalColName = getColName("animalModel")
-  private val PostingCommentColName = getColName("commentModel")
+  private val PostingAnimalColName = getColName("postingAnimalModel")
+  private val PostingCommentColName = getColName("postingCommentModel")
   private val UserColName = getColName("userModel")
   private val WishColName = getColName("wishModel")
 

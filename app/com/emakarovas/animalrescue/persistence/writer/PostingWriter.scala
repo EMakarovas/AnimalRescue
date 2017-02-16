@@ -16,7 +16,7 @@ class PostingWriter @Inject() (
         "startDate" -> posting.startDate,
         "endDate" -> posting.endDate,
         "text" -> posting.text,
-        "cost" -> posting.cost,
+        "costList" -> posting.costList,
         "geolocation" -> posting.geolocation,
         "userId" -> posting.userId)
   }

@@ -20,7 +20,7 @@ class WishWriter @Inject() (
     implicit val geolocationWriter: GeolocationWriter) extends AbstractModelWriter[WishModel] {
   def write(wish: WishModel): BSONDocument = {
     BSONDocument(
-        "id" -> wish.id,
+        "_id" -> wish.id,
         "animalType" -> wish.animalType,
         "specificType" -> wish.specificType,
         "gender" -> wish.gender,

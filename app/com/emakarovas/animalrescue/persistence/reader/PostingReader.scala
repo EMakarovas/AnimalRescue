@@ -19,10 +19,10 @@ class PostingReader @Inject() (
     val startDate = doc.getAs[Date]("startDate").get
     val endDate = doc.getAs[Date]("endDate")
     val text = doc.getAs[String]("text").get
-    val cost = doc.getAs[CostModel]("cost").get
+    val costList = doc.getAs[List[CostModel]]("costList").get
     val geolocation = doc.getAs[GeolocationModel]("geolocation").get
     val userId = doc.getAs[String]("userId").get
-    PostingModel(id, startDate, endDate, text, cost, geolocation, userId)
+    PostingModel(id, startDate, endDate, text, costList, geolocation, userId)
   }
 }
 

@@ -15,7 +15,7 @@ class HomeControllerSpec extends PlaySpec with OneAppPerSuite {
   "HomeController GET" should {
 
     "render the index page from a new instance of controller" in {
-      val controller = new HomeController
+      val controller = app.injector.instanceOf[HomeController]
       val home = controller.index().apply(FakeRequest())
 
       status(home) mustBe OK

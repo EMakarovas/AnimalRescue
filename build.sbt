@@ -8,7 +8,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.11.8"
 
 libraryDependencies += filters
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+libraryDependencies += "org.scalatestplus.play" % "scalatestplus-play_2.11" % "2.0.0-M1"
 libraryDependencies += "org.reactivemongo" %% "play2-reactivemongo" % "0.12.1"
 
 // Adds additional packages into Twirl

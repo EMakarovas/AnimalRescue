@@ -7,7 +7,7 @@ case class PostingModel
    startDate: Date,
    endDate: Option[Date],
    text: String,
-   cost: CostModel,
+   costList: List[CostModel],
    geolocation: GeolocationModel,
    userId: String)
    extends AbstractModel(id) {

@@ -58,26 +58,6 @@ class DefaultPostingAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       }
     }
     
-    "find the correct PostingAnimalModel from the DB when find is called" in {
-      delay
-      val retrievedPostingAnimal = defaultPostingAnimalDAO.findById(PostingAnimal1Id)
-      await(retrievedPostingAnimal)
-      retrievedPostingAnimal onComplete {
-        case Success(option) => option.get mustBe animal1
-        case Failure(t) => fail("failed to retrieve the PostingAnimalModel " + t)
-      }
-    }
-    
-    "find the correct PostingAnimalModel from the DB when findByPostingId is called" in {
-      delay
-      val retrievedPostingAnimal = defaultPostingAnimalDAO.findByPostingId(PostingAnimal1PostingId)
-      await(retrievedPostingAnimal)
-      retrievedPostingAnimal onComplete {
-        case Success(list) => list.size mustBe 1; list(0) mustBe animal1
-        case Failure(t) => fail("failed to retrieve the PostingAnimalModel " + t)
-      }
-    }
-    
     "correctly store a new PostingAnimalModel in the DB when create is called, even with some Nones" in {
       delay
       val f = defaultPostingAnimalDAO.create(animal2)
@@ -85,6 +65,16 @@ class DefaultPostingAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       f onComplete {
         case Success(n) => n mustBe 1
         case Failure(t) => fail("failed to create new PostingAnimalModel " + t)
+      }
+    }
+    
+    "find the correct PostingAnimalModel from the DB when find is called" in {
+      delay
+      val retrievedPostingAnimal = defaultPostingAnimalDAO.findById(PostingAnimal1Id)
+      await(retrievedPostingAnimal)
+      retrievedPostingAnimal onComplete {
+        case Success(option) => option.get mustBe animal1
+        case Failure(t) => fail("failed to retrieve the PostingAnimalModel " + t)
       }
     }
     
@@ -98,6 +88,16 @@ class DefaultPostingAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       }
     }
     
+    "find the correct PostingAnimalModel from the DB when findByPostingId is called" in {
+      delay
+      val retrievedPostingAnimal = defaultPostingAnimalDAO.findByPostingId(PostingAnimal1PostingId)
+      await(retrievedPostingAnimal)
+      retrievedPostingAnimal onComplete {
+        case Success(list) => list.size mustBe 1; list.contains(animal1) mustBe true
+        case Failure(t) => fail("failed to retrieve the PostingAnimalModel " + t)
+      }
+    }
+
     "find the list of all PostingAnimalModels when findAll is called" in {
       delay
       val listFuture = defaultPostingAnimalDAO.findAll()
@@ -108,7 +108,7 @@ class DefaultPostingAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       }
     }
     
-    "update an PostingAnimalModel when update is called" in {
+    "update a PostingAnimalModel when update is called" in {
       delay
       val updateFuture = defaultPostingAnimalDAO.update(updatedPostingAnimal)
       await(updateFuture)
@@ -126,7 +126,7 @@ class DefaultPostingAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       }
     }
     
-    "delete an PostingAnimalModel when deleteById is called" in {
+    "delete a PostingAnimalModel when deleteById is called" in {
       delay
       val deleteFuture = defaultPostingAnimalDAO.deleteById(PostingAnimal1Id)
       await(deleteFuture)

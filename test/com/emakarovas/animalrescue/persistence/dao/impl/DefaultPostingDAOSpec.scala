@@ -1,31 +1,44 @@
 package com.emakarovas.animalrescue.persistence.dao.impl
 
+import java.util.Date
+
 import scala.util.Failure
 import scala.util.Success
 
 import org.scalatestplus.play.OneAppPerSuite
 
+import com.emakarovas.animalrescue.model.CostModel
+import com.emakarovas.animalrescue.model.GeolocationModel
 import com.emakarovas.animalrescue.model.PostingModel
+import com.emakarovas.animalrescue.model.enumeration.CostType
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
+import com.emakarovas.animalrescue.testutil.TestUtils
 
 import play.api.test.Helpers.await
 import play.api.test.Helpers.defaultAwaitTimeout
-import java.util.Calendar
-import java.util.Date
+import reactivemongo.core.errors.DatabaseException
 
 class DefaultPostingDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   
   val Posting1Id = "posting id"
-  val Posting1Date = new Date
+  val Posting1StartDate = new Date
+  val Posting1EndDate = Some(TestUtils.buildDate(6, 6, 2011))
   val Posting1Text = "posting text"
+  val Posting1CostList = List(CostModel("cost id", CostType.Food, 1))
+  val Posting1Geolocation = GeolocationModel("geo id", 1, 1)
+  val Posting1UserId = "user id"
   val Posting2Id = "posting 2 id"
-  val Posting2Date = buildDate(5, 5, 2015)
+  val Posting2StartDate = TestUtils.buildDate(5, 5, 2015)
+  val Posting2EndDate = None
   val Posting2Text = "posting 2 text"
+  val Posting2CostList = List(CostModel("cost 2 id", CostType.Food, 2))
+  val Posting2Geolocation = GeolocationModel("geo id", 2, 2)
+  val Posting2UserId = "user id"
   val Posting1TextUpdated = "posting 2 text updated"
   
-  val posting1 = new PostingModel(Posting1Id, Posting1Date, Posting1Text)
-  val posting2 = new PostingModel(Posting2Id, Posting2Date, Posting2Text)
-  val updatedPosting = new PostingModel(Posting1Id, Posting1Date, Posting1TextUpdated)
+  val posting1 = PostingModel(Posting1Id, Posting1StartDate, Posting1EndDate, Posting1Text, Posting1CostList, Posting1Geolocation, Posting1UserId)
+  val posting2 = PostingModel(Posting2Id, Posting2StartDate, Posting2EndDate, Posting2Text, Posting2CostList, Posting2Geolocation, Posting2UserId)
+  val updatedPosting = PostingModel(Posting1Id, Posting1StartDate, Posting1EndDate, Posting1TextUpdated, Posting1CostList, Posting1Geolocation, Posting1UserId)
   lazy val defaultPostingDAO: DefaultPostingDAO = app.injector.instanceOf[DefaultPostingDAO]
   
   import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,7 +50,10 @@ class DefaultPostingDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       await(f)
       f onComplete {
         case Success(n) => n mustBe 1
-        case Failure(t) => fail("failed to create new PostingModel " + t)
+        case Failure(t) => println("failas")
+      }
+      f recover {
+        case e: DatabaseException => println("rec")
       }
     }
     
@@ -57,6 +73,7 @@ class DefaultPostingDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       await(saveFuture)
       saveFuture onComplete {
         case Success(n) => {
+          delay
           val listFuture = defaultPostingDAO.findAll()
           await(listFuture)
           listFuture onComplete {
@@ -66,6 +83,16 @@ class DefaultPostingDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
         }
         case Failure(t) => fail("failed to save second PostingModel in DB " + t)
       } 
+    }
+    
+    "find the correct PostingModel from the DB when findByUserId is called" in {
+      delay
+      val retrievedPosting = defaultPostingDAO.findByUserId(Posting1UserId)
+      await(retrievedPosting)
+      retrievedPosting onComplete {
+        case Success(list) => list.size mustBe 2; list.contains(posting1) mustBe true; list.contains(posting2) mustBe true;
+        case Failure(t) => fail("failed to retrieve the PostingModel " + t)
+      }
     }
     
     "update a PostingModel when update is called" in {
@@ -121,14 +148,6 @@ class DefaultPostingDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       }
     }
     
-  }
-  
-  def buildDate(day: Int, month: Int, year: Int): Date = {
-    val cal = Calendar.getInstance
-    cal.set(Calendar.DAY_OF_MONTH, day);
-    cal.set(Calendar.MONTH, month);
-    cal.set(Calendar.YEAR, year);
-    cal.getTime
   }
 
 }
