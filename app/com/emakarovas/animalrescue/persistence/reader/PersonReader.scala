@@ -16,10 +16,10 @@ class PersonReader @Inject() (
   override def read(doc: BSONDocument): PersonModel = {
     val id = doc.getAs[String]("_id").get
     val name = doc.getAs[String]("name").get
-    val surname = doc.getAs[String]("surname").get
+    val surnameOpt = doc.getAs[String]("surname")
     val gender = doc.getAs[Gender]("gender").get
     val imageOpt = doc.getAs[ImageModel]("image")
     val userId = doc.getAs[String]("userId").get
-    PersonModel(id, name, surname, gender, imageOpt, userId)
+    PersonModel(id, name, surnameOpt, gender, imageOpt, userId)
   }
 }

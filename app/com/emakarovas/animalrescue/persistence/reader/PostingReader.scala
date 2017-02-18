@@ -22,7 +22,8 @@ class PostingReader @Inject() (
     val costList = doc.getAs[List[CostModel]]("costList").get
     val geolocation = doc.getAs[GeolocationModel]("geolocation").get
     val userId = doc.getAs[String]("userId").get
-    PostingModel(id, startDate, endDate, text, costList, geolocation, userId)
+    val available = doc.getAs[Boolean]("available").get
+    PostingModel(id, startDate, endDate, text, costList, geolocation, userId, available)
   }
 }
 

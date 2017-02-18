@@ -12,25 +12,13 @@ import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 import play.api.test.Helpers.await
 import play.api.test.Helpers.defaultAwaitTimeout
 import com.emakarovas.animalrescue.model.ImageModel
+import com.emakarovas.animalrescue.testutil.TestModelGenerator
 
 class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   
-  val PersonId = "test id"
-  val PersonName = "test name"
-  val PersonSurname = "test surname"
-  val PersonGender = Gender.Male
-  val PersonImage = Some(ImageModel("img id", "url"))
-  val PersonUserId = "user id"
-  val updatedPersonName = "updated test name"
-  val Person2Id = "test id2"
-  val Person2Name = "test name2"
-  val Person2Surname = "test surname2"
-  val Person2Gender = Gender.Female
-  val Person2Image = None
-  val Person2UserId = "user 2 id"
-  val person1 = PersonModel(PersonId, PersonName, PersonSurname, PersonGender, PersonImage, PersonUserId)
-  val person2 = PersonModel(Person2Id, Person2Name, Person2Surname, Person2Gender, Person2Image, Person2UserId)
-  val updatedPerson1 = PersonModel(PersonId, updatedPersonName, PersonSurname, PersonGender, PersonImage, PersonUserId)
+  val person1 = TestModelGenerator.getPerson(1)
+  val person2 = TestModelGenerator.getPerson(2, image=None)
+  val updatedPerson1 = person1.copy(name="updated name")
   lazy val defaultPersonDAO: DefaultPersonDAO = app.injector.instanceOf[DefaultPersonDAO]
   
   import scala.concurrent.ExecutionContext.Implicits.global
@@ -48,7 +36,7 @@ class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     
     "find the correct PersonModel from the DB when find is called" in {
       delay
-      val retrievedPerson = defaultPersonDAO.findById(PersonId)
+      val retrievedPerson = defaultPersonDAO.findById(person1.id)
       await(retrievedPerson)
       retrievedPerson onComplete {
         case Success(option) => option.get mustBe person1
@@ -75,7 +63,7 @@ class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     
     "find the correct PersonModel from the DB when findByUserId is called" in {
       delay
-      val retrievedPerson = defaultPersonDAO.findByUserId(PersonUserId)
+      val retrievedPerson = defaultPersonDAO.findByUserId(person1.userId)
       await(retrievedPerson)
       retrievedPerson onComplete {
         case Success(option) => option.get mustBe person1
@@ -90,10 +78,10 @@ class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       updateFuture onComplete {
         case Success(n) => {
           n mustBe 1
-          val updatedPersonFuture = defaultPersonDAO.findById(PersonId)
+          val updatedPersonFuture = defaultPersonDAO.findById(person1.id)
           await(updatedPersonFuture)
           updatedPersonFuture onComplete {
-            case Success(personOption) => personOption.get.name mustBe updatedPersonName
+            case Success(personOption) => personOption.get.name mustBe updatedPerson1.name
             case Failure(t) => fail("failed to retrieve updated person " + t)
           }
         }
@@ -103,7 +91,7 @@ class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     
     "delete a person when deleteById is called" in {
       delay
-      val deleteFuture = defaultPersonDAO.deleteById(PersonId)
+      val deleteFuture = defaultPersonDAO.deleteById(person1.id)
       await(deleteFuture)
       deleteFuture onComplete {
         case Success(n) => {
@@ -114,7 +102,7 @@ class DefaultPersonDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
             case Success(list) => {
               list.contains(person1) mustBe false
               list.contains(person2) mustBe true
-              val deleteFuture2 = defaultPersonDAO.deleteById(Person2Id)
+              val deleteFuture2 = defaultPersonDAO.deleteById(person2.id)
               await(deleteFuture2)
               deleteFuture2 onComplete {
                 case Success(n) => {

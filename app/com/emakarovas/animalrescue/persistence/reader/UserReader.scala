@@ -14,6 +14,7 @@ class UserReader extends AbstractModelReader[UserModel] {
     val email = doc.getAs[String]("email").get
     val hashedPassword = doc.getAs[String]("hashedPassword").get
     val salt = doc.getAs[String]("salt").get
-    UserModel(id, email, hashedPassword, salt)
+    val available = doc.getAs[Boolean]("available").get
+    UserModel(id, email, hashedPassword, salt, available)
   }
 }

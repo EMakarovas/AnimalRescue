@@ -9,7 +9,12 @@ case class PostingModel
    text: String,
    costList: List[CostModel],
    geolocation: GeolocationModel,
-   userId: String)
-   extends AbstractModel(id) {
+   userId: String,
+   available: Boolean)
+   extends AbstractModel(id) with AvailableModel[PostingModel] {
+  
+  override def buildAvailable(): PostingModel = {
+    this.copy(available=true)
+  }
   
 }

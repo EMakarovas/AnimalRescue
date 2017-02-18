@@ -18,6 +18,7 @@ class PostingWriter @Inject() (
         "text" -> posting.text,
         "costList" -> posting.costList,
         "geolocation" -> posting.geolocation,
-        "userId" -> posting.userId)
+        "userId" -> posting.userId,
+        "available" -> posting.available)
   }
 }

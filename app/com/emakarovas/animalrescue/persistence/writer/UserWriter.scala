@@ -12,6 +12,7 @@ class UserWriter extends AbstractModelWriter[UserModel] {
         "_id" -> user.id,
         "email" -> user.email,
         "hashedPassword" -> user.hashedPassword,
-        "salt" -> user.salt)
+        "salt" -> user.salt,
+        "available" -> user.available)
   }
 }

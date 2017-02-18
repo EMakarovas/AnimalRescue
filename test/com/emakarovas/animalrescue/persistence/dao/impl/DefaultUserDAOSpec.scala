@@ -17,15 +17,17 @@ class DefaultUserDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   val User1Email = "user 1 email"
   val User1HashedPassword = "user 1 hashed psw"
   val User1Salt = "user 1 salt"
+  val User1Available = true
   val User2Id = "user 2 id"
   val User2Email = "user 2 email"
   val User2HashedPassword = "user 2 hashed psw"
   val User2Salt = "user 2 salt"
+  val User2Available = false
   val User1EmailUpdated = "user 1 updated email"
   
-  val user1 = new UserModel(User1Id, User1Email, User1HashedPassword, User1Salt)
-  val user2 = new UserModel(User2Id, User2Email, User2HashedPassword, User2Salt)
-  val updatedUser = new UserModel(User1Id, User1EmailUpdated, User1HashedPassword, User1Salt)
+  val user1 = new UserModel(User1Id, User1Email, User1HashedPassword, User1Salt, User1Available)
+  val user2 = new UserModel(User2Id, User2Email, User2HashedPassword, User2Salt, User2Available)
+  val updatedUser = new UserModel(User1Id, User1EmailUpdated, User1HashedPassword, User1Salt, User1Available)
   lazy val defaultUserDAO: DefaultUserDAO = app.injector.instanceOf[DefaultUserDAO]
   
   import scala.concurrent.ExecutionContext.Implicits.global
@@ -70,12 +72,22 @@ class DefaultUserDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           val listFuture = defaultUserDAO.findAll()
           await(listFuture)
           listFuture onComplete {
-            case Success(list) => list.contains(user1) mustBe true; list.contains(user2) mustBe true
+            case Success(list) => list.size mustBe 2; list.contains(user1) mustBe true; list.contains(user2) mustBe true
             case Failure(t) => fail("failed to retrieve list of UserModels " + t)
           }
         }
         case Failure(t) => fail("failed to save second UserModel in DB " + t)
       } 
+    }
+    
+    "find the list of all available UserModels when findAllAvailable is called" in {
+      delay
+      val listFuture = defaultUserDAO.findAllAvailable()
+      await(listFuture)
+      listFuture onComplete {
+        case Success(list) => list.size mustBe 1; list.contains(user1) mustBe true
+        case Failure(t) => fail("failed to retrieve list of UserModels " + t)
+      }  
     }
     
     "update a UserModel when update is called" in {

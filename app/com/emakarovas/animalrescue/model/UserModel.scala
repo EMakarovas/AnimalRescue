@@ -4,6 +4,11 @@ case class UserModel
   (override val id: String,
    email: String,
    hashedPassword: String,
-   salt: String) extends AbstractModel(id) {
+   salt: String,
+   available: Boolean) extends AbstractModel(id) with AvailableModel[UserModel] {
   
+  override def buildAvailable(): UserModel  = {
+    this.copy(available=true)
+  }
+ 
 }
