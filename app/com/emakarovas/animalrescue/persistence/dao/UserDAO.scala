@@ -6,6 +6,6 @@ import com.google.inject.ImplementedBy
 import com.emakarovas.animalrescue.persistence.dao.impl.DefaultUserDAO
 
 @ImplementedBy(classOf[DefaultUserDAO])
-trait UserDAO extends AbstractModelDAO[UserModel] with AbstractAvailableModelDAO[UserModel] {
+trait UserDAO extends AbstractUpdatableModelDAO[UserModel] {
   def findByEmail(email: String): Future[Option[UserModel]]
 }

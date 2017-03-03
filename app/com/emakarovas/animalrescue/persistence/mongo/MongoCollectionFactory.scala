@@ -9,6 +9,6 @@ import com.emakarovas.animalrescue.persistence.mongo.impl.DefaultMongoCollection
 @ImplementedBy(classOf[DefaultMongoCollectionFactory])
 trait MongoCollectionFactory {
 
-  def getCollection(t: MongoCollectionType): Future[BSONCollection]
+  def getCollection(t: MongoCollectionType[_]): Future[BSONCollection]
   
 }

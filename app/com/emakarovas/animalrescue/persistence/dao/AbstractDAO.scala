@@ -2,35 +2,16 @@ package com.emakarovas.animalrescue.persistence.dao
 
 import scala.concurrent.Future
 
-import reactivemongo.api.Cursor
-import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONDocumentReader
-import reactivemongo.bson.BSONDocumentWriter
+import com.emakarovas.animalrescue.model.AbstractEntity
+import com.emakarovas.animalrescue.persistence.reader.AbstractEntityReader
+import com.emakarovas.animalrescue.persistence.writer.AbstractEntityWriter
 
-trait AbstractDAO[T] {
+import reactivemongo.api.collections.bson.BSONCollection
+
+trait AbstractDAO[T <: AbstractEntity] {
   
-  val collection: Future[BSONCollection]
-  implicit def writer: BSONDocumentWriter[T]
-  implicit def reader: BSONDocumentReader[T]
-  
-  import scala.concurrent.ExecutionContext.Implicits.global
-  
-  def findById(id: String): Future[Option[T]] = {
-    val query = BSONDocument("_id" -> id)
-    collection.flatMap(_.find(query).one)
-  }
-  
-  def findAll(): Future[List[T]] = {
-    collection.flatMap(_.find(BSONDocument()).cursor[T]().collect[List](Int.MaxValue, Cursor.FailOnError[List[T]]()))
-  }
-  
-  def create(obj: T): Future[Int] = {
-    collection.flatMap(_.insert(obj)).map(writeRes => writeRes.n)
-  }
-  
-  def deleteById(id: String): Future[Int] = {
-    val selector = BSONDocument("_id" -> id)
-    collection.flatMap(_.remove(selector)).map(writeRes => writeRes.n)
-  }
+  protected val collection: Future[BSONCollection]
+  protected implicit def writer: AbstractEntityWriter[T]
+  protected implicit def reader: AbstractEntityReader[T]  
+ 
 }

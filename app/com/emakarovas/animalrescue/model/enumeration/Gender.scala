@@ -6,4 +6,3 @@ object Gender extends ModelEnumeration[Gender] {
   case object Female extends Gender
   case object Unspecified extends Gender
 }
-  

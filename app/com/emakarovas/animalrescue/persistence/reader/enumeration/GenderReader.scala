@@ -5,6 +5,9 @@ import com.emakarovas.animalrescue.model.enumeration.Gender
 import javax.inject.Singleton
 import reactivemongo.bson.BSONString
 import reactivemongo.bson.BSONValue
+import com.emakarovas.animalrescue.model.enumeration.Gender
+import com.emakarovas.animalrescue.model.enumeration.Gender
+
 
 @Singleton
 class GenderReader extends EnumerationReader[Gender] {
