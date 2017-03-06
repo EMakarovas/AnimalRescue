@@ -1,6 +1,6 @@
 package com.emakarovas.animalrescue.model.property
 
-import com.emakarovas.animalrescue.model.enumeration.ModelEnumeration
+import com.emakarovas.animalrescue.model.enumeration.Enum
 import com.emakarovas.animalrescue.model.AbstractModel
 import com.emakarovas.animalrescue.model.AbstractPersistableEntity
 import com.emakarovas.animalrescue.model.OfferModel
@@ -11,8 +11,7 @@ import com.emakarovas.animalrescue.model.OfferModel
  * @tparam T The AbstractModel holding this collection property
  * @tparam V The type of the property
  */
-trait UpdatableCollectionProperty[T <: AbstractModel with AbstractPersistableEntity, V] 
-  extends ModelEnumeration[UpdatableCollectionProperty[AbstractModel with AbstractPersistableEntity, V]] {
+abstract class UpdatableCollectionProperty[T <: AbstractModel with AbstractPersistableEntity, V] extends Property[T] {
   /**
    *  The ID of the entity stored in a collection
    */

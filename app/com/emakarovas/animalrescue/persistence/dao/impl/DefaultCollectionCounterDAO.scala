@@ -23,9 +23,9 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class DefaultCollectionCounterDAO @Inject() (
-    colFactory: MongoCollectionFactory,
-    implicit val reader: CollectionCounterReader,
-    implicit val writer: CollectionCounterWriter,
+    val colFactory: MongoCollectionFactory,
+    implicit override val reader: CollectionCounterReader,
+    implicit override val writer: CollectionCounterWriter,
     implicit val modelTypeWriter: ModelTypeWriter) extends CollectionCounterDAO {
   
   val collection = colFactory.getCollection(CollectionCounter)

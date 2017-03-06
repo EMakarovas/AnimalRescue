@@ -1,7 +1,7 @@
 package com.emakarovas.animalrescue.model.enumeration
 
-sealed trait AnimalType extends ModelEnumeration[AnimalType]
-object AnimalType extends ModelEnumeration[AnimalType] {
+sealed trait AnimalType extends Enum[AnimalType]
+object AnimalType extends Enum[AnimalType] {
   case object Dog extends AnimalType
   case object Cat extends AnimalType
   case object Rat extends AnimalType

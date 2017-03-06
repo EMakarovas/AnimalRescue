@@ -8,7 +8,9 @@ import com.emakarovas.animalrescue.model.enumeration.Gender
 import com.emakarovas.animalrescue.model.constants.AccountSettingsConstants
 
 sealed abstract class UserUpdatableProperty[T](
-    override val name: String, override val value: T) extends UpdatableProperty[UserModel, T] {
+    override val name: String, override val value: T) extends UpdatableProperty[UserModel, T] with UserProperty
+    
+object UserUpdatableProperty {
   case class UserPersonNameProperty(override val value: String) 
     extends UserUpdatableProperty[String](UserConstants.Person + "." + PersonConstants.Name, value)
   case class UserPersonSurnameProperty(override val value: Option[String]) 

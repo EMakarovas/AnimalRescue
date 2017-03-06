@@ -1,8 +1,8 @@
 package com.emakarovas.animalrescue.model.enumeration
 
 // TODO - keeping this here but currently not using. TBD if used later
-sealed trait Country extends ModelEnumeration[Country]
-object Country extends ModelEnumeration[Country] {
+sealed trait Country extends Enum[Country]
+object Country extends Enum[Country] {
   case object Afghanistan extends Country
   case object Albania extends Country
   case object Algeria extends Country

@@ -9,9 +9,9 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class VideoWriter extends AbstractEntityWriter[VideoModel] {
-  override def write(image: VideoModel): BSONDocument = {
+  override def write(video: VideoModel): BSONDocument = {
     BSONDocument(
-        MongoConstants.MongoId -> image.id,
-        VideoConstants.Url -> image.url)
+        MongoConstants.MongoId -> video.id,
+        VideoConstants.Url -> video.url)
   }
 }

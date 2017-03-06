@@ -9,8 +9,8 @@ import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.Offer
 import com.emakarovas.animalrescue.persistence.reader.OfferReader
-import com.emakarovas.animalrescue.persistence.writer.CommentWriter
 import com.emakarovas.animalrescue.persistence.writer.OfferWriter
+import com.emakarovas.animalrescue.persistence.writer.property.OfferPropertyWriter
 import com.emakarovas.animalrescue.util.generator.StringGenerator
 
 import javax.inject.Inject
@@ -20,11 +20,11 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class DefaultOfferDAO @Inject() (
-    colFactory: MongoCollectionFactory,
-    val stringGenerator: StringGenerator,
-    implicit val writer: OfferWriter,
-    implicit val reader: OfferReader,
-    implicit val commentWriter: CommentWriter) extends OfferDAO {
+    val colFactory: MongoCollectionFactory,
+    override val stringGenerator: StringGenerator,
+    implicit override val writer: OfferWriter,
+    implicit override val reader: OfferReader,
+    implicit override val propertyWriter: OfferPropertyWriter) extends OfferDAO {
   
   val collection = colFactory.getCollection(Offer)
   

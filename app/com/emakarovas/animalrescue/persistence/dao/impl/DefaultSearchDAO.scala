@@ -9,8 +9,8 @@ import com.emakarovas.animalrescue.persistence.dao.SearchDAO
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.Search
 import com.emakarovas.animalrescue.persistence.reader.SearchReader
-import com.emakarovas.animalrescue.persistence.writer.CommentWriter
 import com.emakarovas.animalrescue.persistence.writer.SearchWriter
+import com.emakarovas.animalrescue.persistence.writer.property.SearchPropertyWriter
 import com.emakarovas.animalrescue.util.generator.StringGenerator
 
 import javax.inject.Inject
@@ -20,11 +20,11 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class DefaultSearchDAO @Inject() (
-    colFactory: MongoCollectionFactory,
-    val stringGenerator: StringGenerator,
-    implicit val writer: SearchWriter,
-    implicit val reader: SearchReader,
-    implicit val commentWriter: CommentWriter) extends SearchDAO {
+    val colFactory: MongoCollectionFactory,
+    override val stringGenerator: StringGenerator,
+    implicit override val writer: SearchWriter,
+    implicit override val reader: SearchReader,
+    implicit override val propertyWriter: SearchPropertyWriter) extends SearchDAO {
   
   import scala.concurrent.ExecutionContext.Implicits.global
   

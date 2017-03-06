@@ -15,9 +15,9 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class UserWriter @Inject() (
-    implicit val genderWriter: GenderWriter,
-    implicit val imageWriter: ImageWriter,
-    implicit val locationWriter: LocationWriter) extends AbstractEntityWriter[UserModel] {
+    implicit private val genderWriter: GenderWriter,
+    implicit private val imageWriter: ImageWriter,
+    implicit private val locationWriter: LocationWriter) extends AbstractEntityWriter[UserModel] {
   
   implicit object personWriter extends AbstractEntityWriter[PersonModel] {
     override def write(person: PersonModel): BSONDocument = {

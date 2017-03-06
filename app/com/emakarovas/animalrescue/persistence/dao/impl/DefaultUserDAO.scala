@@ -9,6 +9,7 @@ import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.User
 import com.emakarovas.animalrescue.persistence.reader.UserReader
 import com.emakarovas.animalrescue.persistence.writer.UserWriter
+import com.emakarovas.animalrescue.persistence.writer.property.UserPropertyWriter
 import com.emakarovas.animalrescue.util.generator.StringGenerator
 
 import javax.inject.Inject
@@ -17,10 +18,11 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class DefaultUserDAO @Inject() (
-    colFactory: MongoCollectionFactory,
-    val stringGenerator: StringGenerator,
-    implicit val writer: UserWriter,
-    implicit val reader: UserReader) extends UserDAO {
+    val colFactory: MongoCollectionFactory,
+    override val stringGenerator: StringGenerator,
+    implicit override val writer: UserWriter,
+    implicit override val reader: UserReader,
+    implicit override val propertyWriter: UserPropertyWriter) extends UserDAO {
   
   import scala.concurrent.ExecutionContext.Implicits.global
   

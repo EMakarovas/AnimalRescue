@@ -11,6 +11,7 @@ import com.emakarovas.animalrescue.persistence.mongo.Animal
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.reader.AnimalReader
 import com.emakarovas.animalrescue.persistence.writer.AnimalWriter
+import com.emakarovas.animalrescue.persistence.writer.property.AnimalPropertyWriter
 import com.emakarovas.animalrescue.util.generator.StringGenerator
 
 import javax.inject.Inject
@@ -20,10 +21,11 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class DefaultAnimalDAO @Inject() (
-    colFactory: MongoCollectionFactory,
-    val stringGenerator: StringGenerator,
-    implicit val writer: AnimalWriter,
-    implicit val reader: AnimalReader) extends AnimalDAO {
+    val colFactory: MongoCollectionFactory,
+    override val stringGenerator: StringGenerator,
+    implicit override val writer: AnimalWriter,
+    implicit override val reader: AnimalReader,
+    implicit override val propertyWriter: AnimalPropertyWriter) extends AnimalDAO {
   
   val collection = colFactory.getCollection(Animal)
  

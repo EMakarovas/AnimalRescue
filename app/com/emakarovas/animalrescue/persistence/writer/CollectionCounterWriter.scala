@@ -11,7 +11,7 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class CollectionCounterWriter @Inject() (
-    implicit val modelTypeWriter: ModelTypeWriter) extends AbstractEntityWriter[CollectionCounterEntity] {
+    implicit private val modelTypeWriter: ModelTypeWriter) extends AbstractEntityWriter[CollectionCounterEntity] {
   override def write(counter: CollectionCounterEntity): BSONDocument = {
     BSONDocument(
         MongoConstants.MongoId -> counter.modelType,

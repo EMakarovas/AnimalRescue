@@ -10,10 +10,10 @@ import reactivemongo.bson.BSONDocument
 
 @Singleton
 class OfferWriter @Inject() (
-    implicit val imageWriter: ImageWriter,
-    implicit val videoWriter: VideoWriter,
-    implicit val locationWriter: LocationWriter,
-    implicit val commentWriter: CommentWriter) extends AbstractEntityWriter[OfferModel] {
+    implicit private val imageWriter: ImageWriter,
+    implicit private val videoWriter: VideoWriter,
+    implicit private val locationWriter: LocationWriter,
+    implicit private val commentWriter: CommentWriter) extends AbstractEntityWriter[OfferModel] {
   override def write(offer: OfferModel): BSONDocument = {
     BSONDocument(
         MongoConstants.MongoId -> offer.id,

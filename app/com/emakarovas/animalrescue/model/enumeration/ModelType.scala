@@ -11,8 +11,8 @@ import com.emakarovas.animalrescue.model.SearchAnimalModel
 import com.emakarovas.animalrescue.model.SearchModel
 import com.emakarovas.animalrescue.model.UserModel
 
-sealed trait ModelType[+T <: AbstractModel] extends ModelEnumeration[ModelType[AbstractModel]]
-object ModelType extends ModelEnumeration[ModelType[AbstractModel]] {
+sealed trait ModelType[+T <: AbstractModel] extends Enum[ModelType[AbstractModel]]
+object ModelType extends Enum[ModelType[AbstractModel]] {
   case object Animal extends ModelType[AnimalModel]
   case object Comment extends ModelType[CommentModel]
   case object Image extends ModelType[ImageModel]

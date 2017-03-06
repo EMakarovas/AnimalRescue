@@ -30,7 +30,7 @@ trait AbstractModelDAO[T <: AbstractModel] extends AbstractDAO[T] {
   
   def create(obj: T): Future[Int] = {
     createList += obj
-    var f = collection.flatMap(_.insert(obj))
+    val f = collection.flatMap(_.insert(obj))
     f onSuccess {
       case _ => createList -= obj
     }

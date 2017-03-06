@@ -1,7 +1,7 @@
 package com.emakarovas.animalrescue.model.enumeration
 
-sealed trait OfferTerminationReason extends ModelEnumeration[OfferTerminationReason]
-object OfferTerminationReason extends ModelEnumeration[OfferTerminationReason] {
+sealed trait OfferTerminationReason extends Enum[OfferTerminationReason]
+object OfferTerminationReason extends Enum[OfferTerminationReason] {
   case object GaveToUser extends OfferTerminationReason
   case object GaveToSomeoneElse extends OfferTerminationReason
   case object KeptIt extends OfferTerminationReason

@@ -29,7 +29,7 @@ class DefaultCollectionCounterDAOSpec extends DelayedPlaySpec with OneAppPerSuit
     
   import scala.concurrent.ExecutionContext.Implicits.global
  
-  it should {
+  "DefaultCollectionCounterDAOSpec" should {
     
     "create collection counters if they don't exist during initialization" in {
       for(modelType <- ModelType.values) {
