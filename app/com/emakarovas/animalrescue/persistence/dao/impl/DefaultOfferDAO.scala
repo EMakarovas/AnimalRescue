@@ -38,11 +38,8 @@ class DefaultOfferDAO @Inject() (
   }
   
   override def addToViewedByUserIdListById(offerId: String, userId: String): Future[Int] = {
-    val selector = BSONDocument(MongoConstants.MongoId -> offerId,
-        "$not" -> BSONDocument(
-            "$elemMatch" -> BSONDocument(
-                OfferConstants.ViewedByUserIdList -> userId)))
-    val update = BSONDocument("$push" -> BSONDocument(
+    val selector = BSONDocument(MongoConstants.MongoId -> offerId)
+    val update = BSONDocument("$addToSet" -> BSONDocument(
         "viewedByUserIdList" -> userId))
     collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.n)
   }

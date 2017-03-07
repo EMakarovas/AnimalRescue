@@ -11,7 +11,7 @@ import com.emakarovas.animalrescue.model.OfferModel
  * @tparam T The AbstractModel holding this collection property
  * @tparam V The type of the property
  */
-abstract class UpdatableCollectionProperty[T <: AbstractModel with AbstractPersistableEntity, V] extends Property[T] {
+abstract class UpdatableCollectionProperty[T <: AbstractModel with AbstractPersistableEntity, +V] extends Property[T] {
   /**
    *  The ID of the entity stored in a collection
    */

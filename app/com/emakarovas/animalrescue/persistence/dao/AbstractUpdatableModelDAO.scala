@@ -15,6 +15,7 @@ import com.emakarovas.animalrescue.persistence.writer.property.PropertyWriter
 import com.emakarovas.animalrescue.util.generator.StringGenerator
 
 import reactivemongo.bson.BSONDocument
+import com.emakarovas.animalrescue.model.property.DeletableCollectionProperty
 
 trait AbstractUpdatableModelDAO[T <: AbstractModel with AbstractPersistableEntity] extends AbstractModelDAO[T] {
   
@@ -117,6 +118,21 @@ trait AbstractUpdatableModelDAO[T <: AbstractModel with AbstractPersistableEntit
     BSONDocument(
         "$push" -> BSONDocument(
             colName -> propValue))
+  }
+  
+  def deleteCollectionPropertyById(id: String, property: DeletableCollectionProperty[T, Any]): Future[Int] = {
+    clearActiveUpdateToken(id)
+    val selector = BSONDocument(
+        "_id" -> id)
+    val update = getDeleteCollectionPropertyQuery(property.entityId, property.collectionName)
+    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.n)
+  }
+  
+  protected def getDeleteCollectionPropertyQuery(id: String, colName: String): BSONDocument = {
+    BSONDocument(
+        "$pull" -> BSONDocument(
+            colName -> BSONDocument(
+                "_id" -> id)))        
   }
   
   protected def clearActiveUpdateToken(modelId: String) = activeUpdateTokenMap -= modelId

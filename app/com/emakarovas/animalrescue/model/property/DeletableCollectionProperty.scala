@@ -11,13 +11,13 @@ import com.emakarovas.animalrescue.model.OfferModel
  * @tparam T The AbstractModel holding this property
  * @tparam V The type of the members inside the collection
  */
-abstract class InsertableCollectionProperty[T <: AbstractModel with AbstractPersistableEntity, +V] extends Property[T] {
+abstract class DeletableCollectionProperty[T <: AbstractModel with AbstractPersistableEntity, +V] extends Property[T] {
+  /**
+   *  The ID of the entity stored in a collection
+   */
+  def entityId: String
   /**
    * The name of the collection inside the parent entity 
    */
   def collectionName: String
-  /**
-   * The value to insert into the collection
-   */
-  def value: V
 }

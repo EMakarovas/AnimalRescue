@@ -53,14 +53,12 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val crF = defaultAnimalDAO.create(animal1)
       await(crF)
       crF onSuccess {
-        case writeRes => {
-          writeRes mustBe 1
-          val findF = defaultAnimalDAO.findById(animal1.id)
-          await(findF)
-          findF onSuccess {
-            case animalOpt => animalOpt.get mustBe animal1
-          }
-        }
+        case n => n mustBe 1
+      }
+      val findF = crF.flatMap(_ => defaultAnimalDAO.findById(animal1.id))
+      await(findF)
+      findF onSuccess {
+        case op => op.get mustBe animal1
       }
     }
     
@@ -68,21 +66,18 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val crF = defaultAnimalDAO.create(animal2)
       await(crF)
       crF onSuccess {
-        case writeRes => {
-          writeRes mustBe 1
-          val findF = defaultAnimalDAO.findById(animal2.id)
-          await(findF)
-          findF onSuccess {
-            case animalOpt => animalOpt.get mustBe animal2
-          }
-        }
+        case n => n mustBe 1
+      }
+      val findF = crF.flatMap(_ => defaultAnimalDAO.findById(animal2.id))
+      await(findF)
+      findF onSuccess {
+        case animalOpt => animalOpt.get mustBe animal2
       }
     }
     
     "after calling create(), return the AnimalModel in findById even before the save is done in the DB" in {
       val crF = defaultAnimalDAO.create(animal3)
       val findF = defaultAnimalDAO.findById(animal3.id)
-      await(crF)
       await(findF)
       findF onSuccess {
         case opt => {
@@ -181,6 +176,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       await(compF)
       
       val findF = compF.flatMap(_ => defaultAnimalDAO.findById(animal1.id))
+      await(findF)
       findF onSuccess {
         case op: Option[AnimalModel] => {
           op.get mustBe animal1
@@ -247,6 +243,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       await(compF)
       
       val findF = compF.flatMap(_ => defaultAnimalDAO.findById(animal1.id))
+      await(findF)
       findF onSuccess {
         case op: Option[AnimalModel] => {
           op.get mustBe animal1
@@ -275,6 +272,79 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
         case res => res.updateStatus mustBe UpdateStatus.Denied
       }
 
+    }
+    
+    "find a list of all AnimalModels when findAll() is called" in {
+      delay()
+      val saveF = defaultAnimalDAO.create(animal4)
+      await(saveF)
+      val findF = saveF.flatMap(_ => defaultAnimalDAO.findAll())
+      await(findF)
+      findF onSuccess {
+        case list => {
+          list.size mustBe 4
+          list.contains(animal1) mustBe true
+          list.contains(animal2) mustBe true
+          list.contains(animal3) mustBe true
+          list.contains(animal4) mustBe true
+        }
+      }
+    }
+    
+    "find AnimalModels when findByOfferId() is called" in {
+      delay()
+      val findF = defaultAnimalDAO.findByOfferId(CommonOfferId)
+      await(findF)
+      findF onSuccess {
+        case list => {
+          list.size mustBe 2
+          list.contains(animal1) mustBe true
+          list.contains(animal3) mustBe true
+        }
+      }
+    }
+    
+    "find AnimalModels when findByOwnerId() is called" in {
+      delay()
+      val findF = defaultAnimalDAO.findByOwnerId(CommonOwnerId.get)
+      await(findF)
+      findF onSuccess {
+        case list => {
+          list.size mustBe 2
+          list.contains(animal2) mustBe true
+          list.contains(animal4) mustBe true
+        }
+      }
+    }
+    
+    "delete AnimalModels when deleteById() is called" in {
+      delay()
+      val singleDeleteF = defaultAnimalDAO.deleteById(animal1.id)
+      await(singleDeleteF)
+      val findF = singleDeleteF.flatMap(_ => defaultAnimalDAO.findAll())
+      await(findF)
+      findF onSuccess {
+        case list => {
+          list.size mustBe 3
+          list.contains(animal2) mustBe true
+          list.contains(animal3) mustBe true
+          list.contains(animal4) mustBe true
+        }
+      }
+      val delF2 = findF.flatMap(_ => defaultAnimalDAO.deleteById(animal2.id))
+      val delF3 = findF.flatMap(_ => defaultAnimalDAO.deleteById(animal3.id))
+      val delF4 = findF.flatMap(_ => defaultAnimalDAO.deleteById(animal4.id))
+      val allDelF = for {
+        f2 <- delF2
+        f3 <- delF3
+        f4 <- delF4
+      } yield(f2 + f3 + f4)
+      await(allDelF)
+      val findF2 = allDelF.flatMap(_ => defaultAnimalDAO.findAll())
+      await(findF2)
+      findF2 onSuccess {
+        case list => list.size mustBe 0
+      }
     }
     
   }
