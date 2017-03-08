@@ -6,6 +6,7 @@ import com.emakarovas.animalrescue.model.SearchModel
 import com.emakarovas.animalrescue.model.constants.SearchAnimalConstants
 import com.emakarovas.animalrescue.model.constants.SearchConstants
 import com.emakarovas.animalrescue.persistence.dao.SearchDAO
+import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.Search
 import com.emakarovas.animalrescue.persistence.reader.SearchReader
@@ -37,16 +38,15 @@ class DefaultSearchDAO @Inject() (
         .collect[List](Int.MaxValue, Cursor.FailOnError[List[SearchModel]]()))
   }
   
-  override def addToPotentialAnimalIdListBySearchAnimalId(searchAnimalId: String, potentialAnimalId: String): Future[Int] = {
-    val selector = BSONDocument(SearchConstants.SearchAnimalList + "." + SearchAnimalConstants.Id -> searchAnimalId,
-            "$elemMatch" -> BSONDocument(
-                SearchConstants.SearchAnimalList + "." + SearchAnimalConstants.Id -> searchAnimalId),
-            "$not" -> BSONDocument(
-                "$elemMatch" -> BSONDocument(
-                    SearchConstants.SearchAnimalList + "." + SearchAnimalConstants.PotentialAnimalIdList -> potentialAnimalId)))
-    val update = BSONDocument("$push" -> BSONDocument(
-        SearchConstants.SearchAnimalList + "." + SearchAnimalConstants.PotentialAnimalIdList -> potentialAnimalId))
-    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.n)
+  override def addToPotentialAnimalIdListBySearchAnimalId(id: String, searchAnimalId: String, potentialAnimalId: String): Future[Int] = {
+    val selector = BSONDocument(
+        MongoConstants.MongoId -> id,
+        SearchConstants.SearchAnimalList -> BSONDocument(
+             "$elemMatch" -> BSONDocument(
+                 MongoConstants.MongoId -> searchAnimalId)))
+    val update = BSONDocument("$addToSet" -> BSONDocument(
+        SearchConstants.SearchAnimalList + ".$." + SearchAnimalConstants.PotentialAnimalIdList -> potentialAnimalId))
+    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.nModified)
   }
   
 }

@@ -5,19 +5,18 @@ import scala.concurrent.Future
 import org.scalatestplus.play.OneAppPerSuite
 
 import com.emakarovas.animalrescue.model.enumeration.ModelType
-import com.emakarovas.animalrescue.persistence.mongo.CollectionCounter
+import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
 import com.emakarovas.animalrescue.persistence.mongo.impl.DefaultMongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.reader.CollectionCounterReader
 import com.emakarovas.animalrescue.persistence.writer.CollectionCounterWriter
 import com.emakarovas.animalrescue.persistence.writer.enumeration.ModelTypeWriter
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 
-import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.BSONDocument
-import reactivemongo.api.commands.WriteResult
-
 import play.api.test.Helpers.await
 import play.api.test.Helpers.defaultAwaitTimeout
+import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.api.commands.WriteResult
+import reactivemongo.bson.BSONDocument
 
 class DefaultCollectionCounterDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   
@@ -63,7 +62,7 @@ class DefaultCollectionCounterDAOSpec extends DelayedPlaySpec with OneAppPerSuit
   private def clearCollection(coll: Future[BSONCollection])(implicit modelTypeWriter: ModelTypeWriter): Future[Unit] = {
     val futureList = scala.collection.mutable.ListBuffer.empty[Future[WriteResult]]
     for(modelType <- ModelType.values) {
-      val selector = BSONDocument("_id" -> modelTypeWriter.write(modelType))
+      val selector = BSONDocument(MongoConstants.MongoId -> modelTypeWriter.write(modelType))
       val f = coll.flatMap(_.remove(selector))
       futureList += f
     } 

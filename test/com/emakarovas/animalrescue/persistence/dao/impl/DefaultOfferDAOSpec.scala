@@ -2,25 +2,20 @@ package com.emakarovas.animalrescue.persistence.dao.impl
 
 import org.scalatestplus.play.OneAppPerSuite
 
-import com.emakarovas.animalrescue.model.AdoptionDetailsModel
-import com.emakarovas.animalrescue.model.OfferModel
+import com.emakarovas.animalrescue.model.CommentModel
 import com.emakarovas.animalrescue.model.ImageModel
-import com.emakarovas.animalrescue.model.OfferDetailsModel
-import com.emakarovas.animalrescue.model.OfferTerminationReasonModel
+import com.emakarovas.animalrescue.model.LocationModel
+import com.emakarovas.animalrescue.model.OfferModel
 import com.emakarovas.animalrescue.model.VideoModel
-import com.emakarovas.animalrescue.model.enumeration.Gender
-import com.emakarovas.animalrescue.model.enumeration.OfferTerminationReason
+import com.emakarovas.animalrescue.model.property.OfferInsertableCollectionProperty
+import com.emakarovas.animalrescue.model.property.OfferUpdatableProperty
+import com.emakarovas.animalrescue.persistence.dao.update.UpdatableModelContainer
+import com.emakarovas.animalrescue.persistence.dao.update.UpdateStatus
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 import com.emakarovas.animalrescue.testutil.TestUtils
-import com.emakarovas.animalrescue.persistence.dao.update.UpdatableModelContainer
-import com.emakarovas.animalrescue.model.property.OfferUpdatableProperty
 
 import play.api.test.Helpers.await
 import play.api.test.Helpers.defaultAwaitTimeout
-import com.emakarovas.animalrescue.persistence.dao.update.UpdateStatus
-import com.emakarovas.animalrescue.model.CommentModel
-import com.emakarovas.animalrescue.model.LocationModel
-import com.emakarovas.animalrescue.model.property.OfferInsertableCollectionProperty
 
 class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   
@@ -225,7 +220,7 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       
     }
     
-    "add to viewedBy list when addToViewedByUserIdListById is called" in {
+    "add to viewedBy list when addToViewedByUserIdListById is called if it doesn't exist yet" in {
       delay()
       val addedId = "added id"
       offer1 = offer1.copy(
@@ -235,7 +230,18 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       await(addF)
       val findF = addF.flatMap(_ => defaultOfferDAO.findById(offer1.id))
       await(findF)
-      findF onSuccess {
+      val addF2 = findF.flatMap(op => {
+        op.get mustBe offer1
+        defaultOfferDAO.addToViewedByUserIdListById(offer1.id, addedId)
+      })
+      await(addF2)
+      val findF2 = addF2.flatMap(n => {
+        n mustBe 0
+        defaultOfferDAO.findById(offer1.id)
+      })
+      await(findF2)
+      findF2 onSuccess {
+        // the retrieved offer must be the same, i.e. have the same list length
         case op => op.get mustBe offer1
       }
     }

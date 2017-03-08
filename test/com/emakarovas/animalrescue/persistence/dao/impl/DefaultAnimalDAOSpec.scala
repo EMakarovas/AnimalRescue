@@ -11,14 +11,14 @@ import com.emakarovas.animalrescue.model.VideoModel
 import com.emakarovas.animalrescue.model.enumeration.AnimalType
 import com.emakarovas.animalrescue.model.enumeration.Gender
 import com.emakarovas.animalrescue.model.enumeration.OfferTerminationReason
+import com.emakarovas.animalrescue.model.property.AnimalUpdatableProperty
+import com.emakarovas.animalrescue.persistence.dao.update.UpdatableModelContainer
+import com.emakarovas.animalrescue.persistence.dao.update.UpdateStatus
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 import com.emakarovas.animalrescue.testutil.TestUtils
-import com.emakarovas.animalrescue.persistence.dao.update.UpdatableModelContainer
-import com.emakarovas.animalrescue.model.property.AnimalUpdatableProperty
 
 import play.api.test.Helpers.await
 import play.api.test.Helpers.defaultAwaitTimeout
-import com.emakarovas.animalrescue.persistence.dao.update.UpdateStatus
 
 class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   

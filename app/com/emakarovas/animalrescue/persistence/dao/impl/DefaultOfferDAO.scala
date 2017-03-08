@@ -41,7 +41,7 @@ class DefaultOfferDAO @Inject() (
     val selector = BSONDocument(MongoConstants.MongoId -> offerId)
     val update = BSONDocument("$addToSet" -> BSONDocument(
         "viewedByUserIdList" -> userId))
-    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.n)
+    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.nModified)
   }
   
 }
