@@ -7,6 +7,9 @@ case class LocationModel
    country: String,
    city: String,
    street: Option[String],
-   latitude: Double,
-   longitude: Double)
+   geolocation: GeolocationModel)
    extends AbstractModel(id)
+
+case class GeolocationModel
+  (longitude: Double,
+   latitude: Double) extends AbstractEntity

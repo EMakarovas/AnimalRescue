@@ -44,6 +44,7 @@ class AnimalWriter @Inject() (
   implicit object offerDetailsWriter extends AbstractEntityWriter[OfferDetailsModel] {
     override def write(offerDetails: OfferDetailsModel): BSONDocument = {
       BSONDocument(
+          OfferDetailsConstants.CastrationCost -> offerDetails.castrationCost,
           OfferDetailsConstants.FoodCost -> offerDetails.foodCost,
           OfferDetailsConstants.ShelterCost -> offerDetails.shelterCost,
           OfferDetailsConstants.VaccinationCost -> offerDetails.vaccinationCost,
@@ -61,6 +62,7 @@ class AnimalWriter @Inject() (
         AnimalConstants.Name -> animal.name,
         AnimalConstants.Age -> animal.age,
         AnimalConstants.Description -> animal.description,
+        AnimalConstants.IsCastrated -> animal.isCastrated,
         AnimalConstants.Image -> animal.image,
         AnimalConstants.Video -> animal.video,
         AnimalConstants.AdoptionDetails -> animal.adoptionDetails,

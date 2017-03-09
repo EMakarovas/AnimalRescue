@@ -8,6 +8,8 @@ import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
 
 import reactivemongo.api.Cursor
 import reactivemongo.bson.BSONDocument
+import reactivemongo.api.indexes.IndexType
+import reactivemongo.api.indexes.Index
 
 trait AbstractModelDAO[T <: AbstractModel] extends AbstractDAO[T] {
   
@@ -40,6 +42,20 @@ trait AbstractModelDAO[T <: AbstractModel] extends AbstractDAO[T] {
   def deleteById(id: String): Future[Int] = {
     val selector = BSONDocument(MongoConstants.MongoId -> id)
     collection.flatMap(_.remove(selector)).map(writeRes => writeRes.n)
+  }
+  
+  def buildIndex(name: String, iType: IndexType, unique: Boolean): Index = {
+    val key = Seq((name, iType))
+    Index(key, Some(name), unique)
+  }
+  
+  protected def setUpIndexes(indexList: Seq[Index]): Unit = {
+    for(index <- indexList)
+      setIndex(index)
+  }
+  
+  protected def setIndex(index: Index): Future[Boolean] = {
+    collection.flatMap(_.indexesManager.ensure(index))
   }
   
 }

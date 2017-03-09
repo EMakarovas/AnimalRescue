@@ -3,6 +3,7 @@ package com.emakarovas.animalrescue.persistence.dao.impl
 import scala.concurrent.Future
 
 import com.emakarovas.animalrescue.model.OfferModel
+import com.emakarovas.animalrescue.model.constants.LocationConstants
 import com.emakarovas.animalrescue.model.constants.OfferConstants
 import com.emakarovas.animalrescue.persistence.dao.OfferDAO
 import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
@@ -16,6 +17,7 @@ import com.emakarovas.animalrescue.util.generator.StringGenerator
 import javax.inject.Inject
 import javax.inject.Singleton
 import reactivemongo.api.Cursor
+import reactivemongo.api.indexes.IndexType
 import reactivemongo.bson.BSONDocument
 
 @Singleton
@@ -29,6 +31,14 @@ class DefaultOfferDAO @Inject() (
   val collection = colFactory.getCollection(Offer)
   
   import scala.concurrent.ExecutionContext.Implicits.global
+  
+  val indexList = List(
+      buildIndex(OfferConstants.Url, IndexType.Ascending, true),
+      buildIndex(OfferConstants.Location + "." + LocationConstants.Country, IndexType.Ascending, false),
+      buildIndex(OfferConstants.Location + "." + LocationConstants.City, IndexType.Ascending, false),
+      buildIndex(OfferConstants.Location + "." + LocationConstants.Geolocation, IndexType.Geo2DSpherical, false)
+  )
+  setUpIndexes(indexList)
   
   override def findByUserId(userId: String): Future[List[OfferModel]] = {
     val selector = BSONDocument(OfferConstants.UserId -> userId)

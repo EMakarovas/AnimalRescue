@@ -17,6 +17,7 @@ import com.emakarovas.animalrescue.util.generator.StringGenerator
 import javax.inject.Inject
 import javax.inject.Singleton
 import reactivemongo.api.Cursor
+import reactivemongo.api.indexes.IndexType
 import reactivemongo.bson.BSONDocument
 
 @Singleton
@@ -30,6 +31,16 @@ class DefaultAnimalDAO @Inject() (
   val collection = colFactory.getCollection(Animal)
  
   import scala.concurrent.ExecutionContext.Implicits.global
+  
+  private val indexList = List(
+      buildIndex(AnimalConstants.AnimalType, IndexType.Ascending, false),
+      buildIndex(AnimalConstants.Gender, IndexType.Ascending, false),
+      buildIndex(AnimalConstants.Age, IndexType.Ascending, false),
+      buildIndex(AnimalConstants.IsCastrated, IndexType.Ascending, false),
+      buildIndex(AnimalConstants.AdoptionDetails + "." + AdoptionDetailsConstants.OwnerId, IndexType.Ascending, false),
+      buildIndex(AnimalConstants.OfferDetails + "." + OfferDetailsConstants.OfferId, IndexType.Ascending, false)
+  )  
+  setUpIndexes(indexList)
   
   override def findByOfferId(offerId: String): Future[List[AnimalModel]] = {
     val selector = BSONDocument(AnimalConstants.OfferDetails + "." + OfferDetailsConstants.OfferId -> offerId)

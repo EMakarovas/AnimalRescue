@@ -7,6 +7,10 @@ object LocationConstants {
   val Country = "country"
   val City = "city"
   val Street = "street"
+  val Geolocation = "geolocation"
+}
+
+object GeolocationConstants {
   val Latitude = "latitude"
   val Longitude = "longitude"
 }

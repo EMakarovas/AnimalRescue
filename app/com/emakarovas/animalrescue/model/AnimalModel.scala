@@ -14,6 +14,7 @@ case class AnimalModel
    name: Option[String],
    age: Option[Int], // stored as months
    description: Option[String],
+   isCastrated: Boolean,
    image: Option[ImageModel],
    video: Option[VideoModel],
    adoptionDetails: Option[AdoptionDetailsModel],
@@ -21,7 +22,8 @@ case class AnimalModel
    extends AbstractModel(id) with AbstractAnimalEntity with AbstractPersistableEntity
 
 case class OfferDetailsModel
-  (foodCost: Option[Double],
+  (castrationCost: Option[Double],
+   foodCost: Option[Double],
    shelterCost: Option[Double],
    vaccinationCost: Option[Double],
    offerId: String,

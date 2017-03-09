@@ -3,6 +3,7 @@ package com.emakarovas.animalrescue.persistence.dao.impl
 import org.scalatestplus.play.OneAppPerSuite
 
 import com.emakarovas.animalrescue.model.CommentModel
+import com.emakarovas.animalrescue.model.GeolocationModel
 import com.emakarovas.animalrescue.model.LocationModel
 import com.emakarovas.animalrescue.model.SearchAnimalModel
 import com.emakarovas.animalrescue.model.SearchModel
@@ -31,7 +32,7 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           SearchAnimalModel("search animal id 1", AnimalType.Pig, Some("pink pig"), Gender.Female, Some(12), Some(24),
               List("potential id 1", "potential id 2"),
               Some(SearchTerminationReasonModel(SearchTerminationReason.FoundHere, Some("text 1"))))),
-      LocationModel("loc id 1", "country 1", "city 1", Some("street 1"), 15.5, 16.5),
+      LocationModel("loc id 1", "country 1", "city 1", Some("street 1"), GeolocationModel(15.5, 16.5)),
       List(
           CommentModel("comment id 1", TestUtils.buildDate(3, 3, 2013), "comment text 1", Some("comment name 1"), 
           Some("comment user id 1")),
@@ -40,7 +41,7 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       TestUtils.buildDate(5, 5, 1975), Some(TestUtils.buildDate(6, 6, 1975)), true, CommonUserId)
   private var search2 = SearchModel("id 2", "url 2", 
       List(), 
-      LocationModel("loc id 2", "country 2", "city 2", Some("street 2"), 25.5, 26.5),
+      LocationModel("loc id 2", "country 2", "city 2", Some("street 2"), GeolocationModel(25.5, 26.5)),
       List(),
       TestUtils.buildDate(8, 8, 1988), None, false, "other user id")
   private var search3 = SearchModel("id 3", "url 3", 
@@ -48,7 +49,7 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           SearchAnimalModel("search animal id 3", AnimalType.Hedgehog, Some("cutehog"), Gender.Unspecified, Some(32), Some(44),
               List("potential id 3", "potential id 22"),
               Some(SearchTerminationReasonModel(SearchTerminationReason.FoundElsewhere, Some("text 3"))))),
-      LocationModel("loc id 3", "country 3", "city 3", Some("street 3"), 35.5, 36.5),
+      LocationModel("loc id 3", "country 3", "city 3", Some("street 3"), GeolocationModel(35.5, 36.5)),
       List(
           CommentModel("comment id 3", TestUtils.buildDate(3, 3, 2033), "comment text 3", Some("comment name 3"), 
           Some("comment user id 3")),

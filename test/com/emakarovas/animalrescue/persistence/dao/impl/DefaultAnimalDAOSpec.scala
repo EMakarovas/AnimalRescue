@@ -25,21 +25,21 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   private val CommonOfferId = "offer id 1"
   private val CommonOwnerId = Some("owner id 1")
   private var animal1 = AnimalModel("id 1", AnimalType.Bird, Some("Parrot"), Gender.Male, Some("animal name 1"), Some(12),
-      Some("description 1"), Some(ImageModel("img id 1", "img url 1")), Some(VideoModel("vid id 1", "vid url 1")),
+      Some("description 1"), true, Some(ImageModel("img id 1", "img url 1")), Some(VideoModel("vid id 1", "vid url 1")),
       Some(AdoptionDetailsModel(None, TestUtils.buildDate(1, 1, 2011))),
-      Some(OfferDetailsModel(Some(1), Some(2), Some(3), CommonOfferId, 
+      Some(OfferDetailsModel(Some(18), Some(1), Some(2), Some(3), CommonOfferId, 
           Some(OfferTerminationReasonModel(OfferTerminationReason.KeptIt, Some("term text 1"))))))
   private var animal2 = AnimalModel("id 2", AnimalType.Cat, None, Gender.Unspecified, None, None,
-      None, None, None,
+      None, true, None, None,
       Some(AdoptionDetailsModel(CommonOwnerId, TestUtils.buildDate(2, 2, 2012))),
       None)
   private var animal3 = AnimalModel("id 3", AnimalType.Dog, Some("Rottweiler"), Gender.Female, None, Some(24),
-      None, None, None,
+      None, false, None, None,
       None,
-      Some(OfferDetailsModel(Some(4), Some(5), Some(6), CommonOfferId,
+      Some(OfferDetailsModel(Some(255), Some(4), Some(5), Some(6), CommonOfferId,
           Some(OfferTerminationReasonModel(OfferTerminationReason.GaveToSomeoneElse, Some("term text 3"))))))
   private var animal4 = AnimalModel("id 4", AnimalType.Pig, Some("Cute pig"), Gender.Unspecified, Some("Junior"), None,
-      None, None, None,
+      None, false, None, None,
       Some(AdoptionDetailsModel(CommonOwnerId, TestUtils.buildDate(4, 4, 2014))),
       None)
   
@@ -50,6 +50,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   "DefaultAnimalDAOSpec" should {
     
     "create a new AnimalModel by calling create()" in {
+      delay()
       val crF = defaultAnimalDAO.create(animal1)
       await(crF)
       crF onSuccess {
@@ -122,6 +123,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           name = Some("updated animal name"),
           age = Some(9001),
           description = Some("updated descr"),
+          isCastrated = false,
           image = Some(ImageModel("updated id", "updated url")),
           video = Some(VideoModel("updated vid id", "updated vid url")),
           offerDetails = Some(animal1.offerDetails.get.copy(
@@ -146,20 +148,26 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val descriptionProp = AnimalUpdatableProperty.AnimalDescriptionProperty(animal1.description)
       val updF5 = defaultAnimalDAO.updatePropertyById(animal1.id, descriptionProp)
       
+      val castratedProp = AnimalUpdatableProperty.AnimalIsCastratedProperty(animal1.isCastrated)
+      val updF6 = defaultAnimalDAO.updatePropertyById(animal1.id, castratedProp)
+      
       val imageProp = AnimalUpdatableProperty.AnimalImageProperty(animal1.image)
-      val updF6 = defaultAnimalDAO.updatePropertyById(animal1.id, imageProp)
+      val updF7 = defaultAnimalDAO.updatePropertyById(animal1.id, imageProp)
       
       val videoProp = AnimalUpdatableProperty.AnimalVideoProperty(animal1.video)
-      val updF7 = defaultAnimalDAO.updatePropertyById(animal1.id, videoProp)
+      val updF8 = defaultAnimalDAO.updatePropertyById(animal1.id, videoProp)
+      
+      val castrCostProp = AnimalUpdatableProperty.AnimalCastrationCostProperty(animal1.offerDetails.get.castrationCost)
+      val updF9 = defaultAnimalDAO.updatePropertyById(animal1.id, castrCostProp)
       
       val foodCostProp = AnimalUpdatableProperty.AnimalFoodCostProperty(animal1.offerDetails.get.foodCost)
-      val updF8 = defaultAnimalDAO.updatePropertyById(animal1.id, foodCostProp)
+      val updF10 = defaultAnimalDAO.updatePropertyById(animal1.id, foodCostProp)
       
       val shelterCostProp = AnimalUpdatableProperty.AnimalShelterCostProperty(animal1.offerDetails.get.shelterCost)
-      val updF9 = defaultAnimalDAO.updatePropertyById(animal1.id, shelterCostProp)
+      val updF11 = defaultAnimalDAO.updatePropertyById(animal1.id, shelterCostProp)
       
       val vaccinationCostProp = AnimalUpdatableProperty.AnimalVaccinationCostProperty(animal1.offerDetails.get.vaccinationCost)
-      val updF10 = defaultAnimalDAO.updatePropertyById(animal1.id, vaccinationCostProp)
+      val updF12 = defaultAnimalDAO.updatePropertyById(animal1.id, vaccinationCostProp)
       
       val compF = for {
         u1 <- updF1
@@ -172,7 +180,9 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
         u8 <- updF8
         u9 <- updF9
         u10 <- updF10
-      } yield(u1 + u2 + u3 + u4 + u5 + u6 + u7 + u8 + u9 + u10)
+        u11 <- updF11
+        u12 <- updF12
+      } yield(u1 + u2 + u3 + u4 + u5 + u6 + u7 + u8 + u9 + u10 + u11 + u12)
       await(compF)
       
       val findF = compF.flatMap(_ => defaultAnimalDAO.findById(animal1.id))
@@ -196,6 +206,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           image = None,
           video = None,
           offerDetails = Some(animal1.offerDetails.get.copy(
+              castrationCost = None,
               foodCost = None,
               shelterCost = None,
               vaccinationCost = None
@@ -220,14 +231,17 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val videoProp = AnimalUpdatableProperty.AnimalVideoProperty(animal1.video)
       val updF6 = defaultAnimalDAO.updatePropertyById(animal1.id, videoProp)
       
+      val castrCostProp = AnimalUpdatableProperty.AnimalCastrationCostProperty(animal1.offerDetails.get.castrationCost)
+      val updF7 = defaultAnimalDAO.updatePropertyById(animal1.id, castrCostProp)
+      
       val foodCostProp = AnimalUpdatableProperty.AnimalFoodCostProperty(animal1.offerDetails.get.foodCost)
-      val updF7 = defaultAnimalDAO.updatePropertyById(animal1.id, foodCostProp)
+      val updF8 = defaultAnimalDAO.updatePropertyById(animal1.id, foodCostProp)
       
       val shelterCostProp = AnimalUpdatableProperty.AnimalShelterCostProperty(animal1.offerDetails.get.shelterCost)
-      val updF8 = defaultAnimalDAO.updatePropertyById(animal1.id, shelterCostProp)
+      val updF9 = defaultAnimalDAO.updatePropertyById(animal1.id, shelterCostProp)
       
       val vaccinationCostProp = AnimalUpdatableProperty.AnimalVaccinationCostProperty(animal1.offerDetails.get.vaccinationCost)
-      val updF9 = defaultAnimalDAO.updatePropertyById(animal1.id, vaccinationCostProp)
+      val updF10 = defaultAnimalDAO.updatePropertyById(animal1.id, vaccinationCostProp)
       
       val compF = for {
         u1 <- updF1
@@ -239,7 +253,8 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
         u7 <- updF7
         u8 <- updF8
         u9 <- updF9
-      } yield(u1 + u2 + u3 + u4 + u5 + u6 + u7 + u8 + u9)
+        u10 <- updF10
+      } yield(u1 + u2 + u3 + u4 + u5 + u6 + u7 + u8 + u9 + u10)
       await(compF)
       
       val findF = compF.flatMap(_ => defaultAnimalDAO.findById(animal1.id))

@@ -3,6 +3,7 @@ package com.emakarovas.animalrescue.persistence.dao.impl
 import scala.concurrent.Future
 
 import com.emakarovas.animalrescue.model.SearchModel
+import com.emakarovas.animalrescue.model.constants.LocationConstants
 import com.emakarovas.animalrescue.model.constants.SearchAnimalConstants
 import com.emakarovas.animalrescue.model.constants.SearchConstants
 import com.emakarovas.animalrescue.persistence.dao.SearchDAO
@@ -17,6 +18,7 @@ import com.emakarovas.animalrescue.util.generator.StringGenerator
 import javax.inject.Inject
 import javax.inject.Singleton
 import reactivemongo.api.Cursor
+import reactivemongo.api.indexes.IndexType
 import reactivemongo.bson.BSONDocument
 
 @Singleton
@@ -30,6 +32,20 @@ class DefaultSearchDAO @Inject() (
   import scala.concurrent.ExecutionContext.Implicits.global
   
   val collection = colFactory.getCollection(Search)
+  
+  val indexList = List(
+      buildIndex(SearchConstants.Url, IndexType.Ascending, true),
+      buildIndex(SearchConstants.SearchAnimalList + "." + MongoConstants.MongoId, IndexType.Ascending, true),
+      buildIndex(SearchConstants.SearchAnimalList + "." + SearchAnimalConstants.AnimalType, IndexType.Ascending, false),
+      buildIndex(SearchConstants.SearchAnimalList + "." + SearchAnimalConstants.Gender, IndexType.Ascending, false),
+      buildIndex(SearchConstants.SearchAnimalList + "." + SearchAnimalConstants.MinAge, IndexType.Ascending, false),
+      buildIndex(SearchConstants.SearchAnimalList + "." + SearchAnimalConstants.MaxAge, IndexType.Ascending, false),
+      buildIndex(SearchConstants.Location + "." + LocationConstants.Country, IndexType.Ascending, false),
+      buildIndex(SearchConstants.Location + "." + LocationConstants.City, IndexType.Ascending, false),
+      buildIndex(SearchConstants.Location + "." + LocationConstants.Geolocation, IndexType.Geo2DSpherical, false),
+      buildIndex(SearchConstants.UserId, IndexType.Ascending, false)
+  )
+  setUpIndexes(indexList)
  
   override def findByUserId(userId: String): Future[List[SearchModel]] = {
     val selector = BSONDocument(SearchConstants.UserId -> userId)

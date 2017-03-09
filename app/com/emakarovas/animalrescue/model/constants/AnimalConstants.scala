@@ -14,6 +14,7 @@ object AnimalConstants {
   val Name = "name"
   val Age = "age"
   val Description = "description"
+  val IsCastrated = "isCastrated"
   val Image = "image"
   val Video = "video"
   val AdoptionDetails = "adoptionDetails"
@@ -21,6 +22,7 @@ object AnimalConstants {
 }
 
 object OfferDetailsConstants {
+  val CastrationCost = "castrationCost"
   val FoodCost = "foodCost"
   val ShelterCost = "shelterCost"
   val VaccinationCost = "vaccinationCost"

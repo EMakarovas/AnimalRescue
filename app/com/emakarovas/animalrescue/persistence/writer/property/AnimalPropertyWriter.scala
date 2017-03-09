@@ -14,6 +14,7 @@ import com.emakarovas.animalrescue.persistence.writer.enumeration.OfferTerminati
 
 import javax.inject.Inject
 import javax.inject.Singleton
+import reactivemongo.bson.BSONBoolean
 import reactivemongo.bson.BSONDouble
 import reactivemongo.bson.BSONInteger
 import reactivemongo.bson.BSONString
@@ -41,6 +42,7 @@ class AnimalPropertyWriter @Inject() (
       }
       case str: String => BSONString(str)
       case g: Gender => genderWriter.write(g)
+      case b: Boolean => BSONBoolean(b)
     }
   }
 

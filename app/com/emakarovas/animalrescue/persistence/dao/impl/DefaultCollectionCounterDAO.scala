@@ -31,7 +31,7 @@ class DefaultCollectionCounterDAO @Inject() (
   val collection = colFactory.getCollection(CollectionCounter)
  
   import scala.concurrent.ExecutionContext.Implicits.global
-  
+    
   private val counterMap = scala.collection.mutable.Map[ModelType[_], Int]()
   
   // Constructor

@@ -3,6 +3,7 @@ package com.emakarovas.animalrescue.persistence.dao.impl
 import org.scalatestplus.play.OneAppPerSuite
 
 import com.emakarovas.animalrescue.model.CommentModel
+import com.emakarovas.animalrescue.model.GeolocationModel
 import com.emakarovas.animalrescue.model.ImageModel
 import com.emakarovas.animalrescue.model.LocationModel
 import com.emakarovas.animalrescue.model.OfferModel
@@ -22,7 +23,7 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   private val CommonUserId = "user id 1"
   private var offer1 = OfferModel("id 1", "url 1", TestUtils.buildDate(1, 1, 2011), Some(TestUtils.buildDate(2, 2, 2012)),
       "offer text 1", Some(ImageModel("img id 1", "img url 1")), Some(VideoModel("vid id 1", "vid url 1")),
-      LocationModel("loc id 1", "country 1", "city 1", Some("street 1"), 15.5, 16.5),
+      LocationModel("loc id 1", "country 1", "city 1", Some("street 1"), GeolocationModel(15.5, 16.5)),
       List(
           CommentModel("comment id 1", TestUtils.buildDate(3, 3, 2013), "comment text 1", Some("comment name 1"), 
           Some("comment user id 1")),
@@ -31,12 +32,12 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       List("viewed by user 1", "viewed by user 2"), CommonUserId)
   private var offer2 = OfferModel("id 2", "url 2", TestUtils.buildDate(6, 6, 2022), Some(TestUtils.buildDate(5, 5, 2023)),
       "offer text 2", None, None,
-      LocationModel("loc id 2", "country 2", "city 2", Some("street 2"), 25.5, 26.5),
+      LocationModel("loc id 2", "country 2", "city 2", Some("street 2"), GeolocationModel(25.5, 26.5)),
       List(),
       List(), "user id 2")
   private var offer3 = OfferModel("id 3", "url 3", TestUtils.buildDate(3, 3, 2033), Some(TestUtils.buildDate(2, 2, 2032)),
       "offer text 3", Some(ImageModel("img id 3", "img url 3")), Some(VideoModel("vid id 3", "vid url 3")),
-      LocationModel("loc id 3", "country 3", "city 3", Some("street 3"), 35.5, 36.5),
+      LocationModel("loc id 3", "country 3", "city 3", Some("street 3"), GeolocationModel(35.5, 36.5)),
       List(
           CommentModel("comment id 3", TestUtils.buildDate(3, 3, 2033), "comment text 3", Some("comment name 3"), 
           Some("comment user id 3")),

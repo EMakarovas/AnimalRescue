@@ -43,12 +43,13 @@ class AnimalReader @Inject()
 
   implicit object offerDetailsReader extends BSONDocumentReader[OfferDetailsModel] {
     override def read(doc: BSONDocument): OfferDetailsModel = {
+      val castrationCostOpt = doc.getAs[Double](OfferDetailsConstants.CastrationCost)
       val foodCostOpt = doc.getAs[Double](OfferDetailsConstants.FoodCost)
       val shelterCostOpt = doc.getAs[Double](OfferDetailsConstants.ShelterCost)
       val vaccinationCostOpt = doc.getAs[Double](OfferDetailsConstants.VaccinationCost)
       val offerId = doc.getAs[String](OfferDetailsConstants.OfferId).get
       val offerTerminationReasonOpt = doc.getAs[OfferTerminationReasonModel](OfferDetailsConstants.OfferTerminationReason)
-      OfferDetailsModel(foodCostOpt, shelterCostOpt, vaccinationCostOpt, offerId, offerTerminationReasonOpt)
+      OfferDetailsModel(castrationCostOpt, foodCostOpt, shelterCostOpt, vaccinationCostOpt, offerId, offerTerminationReasonOpt)
     }
   }
   
@@ -68,11 +69,12 @@ class AnimalReader @Inject()
     val nameOpt = doc.getAs[String](AnimalConstants.Name)
     val ageOpt = doc.getAs[Int](AnimalConstants.Age)
     val descriptionOpt = doc.getAs[String](AnimalConstants.Description)
+    val isCastrated = doc.getAs[Boolean](AnimalConstants.IsCastrated).get
     val imageOpt = doc.getAs[ImageModel](AnimalConstants.Image)
     val videoOpt = doc.getAs[VideoModel](AnimalConstants.Video)
     val adoptionDetailsOpt = doc.getAs[AdoptionDetailsModel](AnimalConstants.AdoptionDetails)
     val offerDetailsOpt = doc.getAs[OfferDetailsModel](AnimalConstants.OfferDetails)
-    AnimalModel(id, animalType, specificTypeOpt, gender, nameOpt, ageOpt, descriptionOpt, imageOpt, videoOpt,
+    AnimalModel(id, animalType, specificTypeOpt, gender, nameOpt, ageOpt, descriptionOpt, isCastrated, imageOpt, videoOpt,
         adoptionDetailsOpt, offerDetailsOpt)
   }
   
