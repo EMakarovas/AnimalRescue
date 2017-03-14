@@ -1,5 +1,5 @@
 package com.emakarovas.animalrescue.model
 
-trait AbstracturlAccessibleEntity extends AbstractEntity {
+trait AbstractURLAccessibleEntity extends AbstractEntity {
   def url: String
 }

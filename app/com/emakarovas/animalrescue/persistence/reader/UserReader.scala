@@ -43,16 +43,17 @@ class UserReader @Inject() (
     }
   }
   
-  override def read(doc: BSONDocument): UserModel = {
-    val id = doc.getAs[String](MongoConstants.MongoId).get
+  override def read(topDoc: BSONDocument): UserModel = {
+    val id = topDoc.getAs[String](MongoConstants.MongoId).get
+    val doc = topDoc.getAs[BSONDocument](MongoConstants.Data).get
     val email = doc.getAs[String](UserConstants.Email).get
     val hashedPassword = doc.getAs[String](UserConstants.HashedPassword).get
-    val salt = doc.getAs[String](UserConstants.Salt).get
+    val saltOpt = doc.getAs[String](UserConstants.Salt)
     val activationStringOpt = doc.getAs[String](UserConstants.ActivationString)
     val passwordResetStringOpt = doc.getAs[String](UserConstants.PasswordResetString)
-    val person = doc.getAs[PersonModel](UserConstants.Person).get
+    val personOpt = doc.getAs[PersonModel](UserConstants.Person)
     val settings = doc.getAs[AccountSettingsModel](UserConstants.Settings).get
-    UserModel(id, email, hashedPassword, salt, activationStringOpt, passwordResetStringOpt, person, settings)
+    UserModel(id, email, hashedPassword, saltOpt, activationStringOpt, passwordResetStringOpt, personOpt, settings)
   }
   
 }

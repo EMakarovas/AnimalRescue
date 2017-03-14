@@ -43,7 +43,7 @@ class DefaultCollectionCounterDAO @Inject() (
     f onComplete {
       case Success(count) => counterMap.put(modelType, count)
       case Failure(t) => {
-        counterMap.put(modelType, 1)
+        counterMap.put(modelType, 0)
         val initF = initializeCollectionCounter(modelType)
         initF onSuccess {
           case _ => {
@@ -98,7 +98,7 @@ class DefaultCollectionCounterDAO @Inject() (
   }
   
   private def initializeCollectionCounter(modelType: ModelType[AbstractModel]): Future[Unit] = {
-    val colCounter = CollectionCounterEntity(modelType, 1)
+    val colCounter = CollectionCounterEntity(modelType,0)
     collection.flatMap(_.insert(colCounter)).map((writeRes) => {})
   }
   

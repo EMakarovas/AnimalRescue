@@ -53,8 +53,9 @@ class SearchReader @Inject() (
     }
   }
 
-  override def read(doc: BSONDocument): SearchModel = {
-    val id = doc.getAs[String](MongoConstants.MongoId).get
+  override def read(topDoc: BSONDocument): SearchModel = {
+    val id = topDoc.getAs[String](MongoConstants.MongoId).get
+    val doc = topDoc.getAs[BSONDocument](MongoConstants.Data).get
     val url = doc.getAs[String](SearchConstants.Url).get
     val searchAnimalList = doc.getAs[List[SearchAnimalModel]](SearchConstants.SearchAnimalList).get
     val location = doc.getAs[LocationModel](SearchConstants.Location).get

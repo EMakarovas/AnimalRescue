@@ -17,14 +17,15 @@ class SearchWriter @Inject() (
   def write(search: SearchModel): BSONDocument = {
     BSONDocument(
         MongoConstants.MongoId -> search.id,
-        SearchConstants.Url -> search.url,
-        SearchConstants.SearchAnimalList -> search.searchAnimalList,
-        SearchConstants.Location -> search.location,
-        SearchConstants.CommentList -> search.commentList,
-        SearchConstants.StartDate -> search.startDate,
-        SearchConstants.EndDate -> search.endDate,
-        SearchConstants.IsPublic -> search.isPublic,
-        SearchConstants.UserId -> search.userId)
+        MongoConstants.Data -> BSONDocument(
+            SearchConstants.Url -> search.url,
+            SearchConstants.SearchAnimalList -> search.searchAnimalList,
+            SearchConstants.Location -> search.location,
+            SearchConstants.CommentList -> search.commentList,
+            SearchConstants.StartDate -> search.startDate,
+            SearchConstants.EndDate -> search.endDate,
+            SearchConstants.IsPublic -> search.isPublic,
+            SearchConstants.UserId -> search.userId))
   }
   
 }

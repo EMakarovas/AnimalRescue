@@ -25,6 +25,11 @@
     <appender-ref ref="STDOUT" />
   </appender>
 
+  <logger name="error" level="ERROR">
+    <appender-ref ref="ASYNCFILE" />
+    <appender-ref ref="ASYNCSTDOUT" />
+  </logger>
+  
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
 

@@ -7,6 +7,7 @@ import com.emakarovas.animalrescue.model.constants.LocationConstants
 import com.emakarovas.animalrescue.model.constants.PersonConstants
 import com.emakarovas.animalrescue.model.constants.UserConstants
 import com.emakarovas.animalrescue.persistence.dao.UserDAO
+import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.User
 import com.emakarovas.animalrescue.persistence.reader.UserReader
@@ -22,7 +23,7 @@ import reactivemongo.bson.BSONDocument
 @Singleton
 class DefaultUserDAO @Inject() (
     val colFactory: MongoCollectionFactory,
-    override val stringGenerator: StringGenerator,
+    val stringGenerator: StringGenerator,
     implicit override val writer: UserWriter,
     implicit override val reader: UserReader,
     implicit override val propertyWriter: UserPropertyWriter) extends UserDAO {
@@ -40,7 +41,7 @@ class DefaultUserDAO @Inject() (
   setUpIndexes(indexList)
  
   override def findByEmail(email: String): Future[Option[UserModel]] = {
-    val selector = BSONDocument(UserConstants.Email -> email)
+    val selector = BSONDocument(MongoConstants.Data + "." + UserConstants.Email -> email)
     collection.flatMap(_.find(selector).one)
   }
   

@@ -15,4 +15,4 @@ case class OfferModel
    viewedByUserIdList: List[String],
    userId: String)
    // also has a list of animalmodels in their own collection
-   extends AbstractModel(id) with AbstracturlAccessibleEntity with AbstractPersistableEntity
+   extends AbstractModel(id) with AbstractURLAccessibleEntity with AbstractPersistableEntity

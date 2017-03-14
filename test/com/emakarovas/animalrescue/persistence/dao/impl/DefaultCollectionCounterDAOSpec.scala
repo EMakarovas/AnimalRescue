@@ -32,13 +32,13 @@ class DefaultCollectionCounterDAOSpec extends DelayedPlaySpec with OneAppPerSuit
     
     "create collection counters if they don't exist during initialization" in {
       for(modelType <- ModelType.values) {
-        defaultCollectionCounterDAO.get(modelType) mustBe 1            
+        defaultCollectionCounterDAO.get(modelType) mustBe 0            
       }
     }
     
     "return the correct id when getAndIncrement is called" in {
       delay()
-      for(modelType <- ModelType.values; i <- 2 to 10) {
+      for(modelType <- ModelType.values; i <- 1 to 10) {
         val id = defaultCollectionCounterDAO.incrementAndGet(modelType)
         id mustBe i
       }
@@ -52,6 +52,7 @@ class DefaultCollectionCounterDAOSpec extends DelayedPlaySpec with OneAppPerSuit
       }
       val deleteF = clearCollection(defaultCollectionCounterDAO.collection)
       await(deleteF)
+      delay(2000) // just in case
     }
     
   }

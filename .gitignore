@@ -1,6 +1,7 @@
 .g8/
 .settings/
 bin/
+conf/mail.conf
 gradle/
 logs/
 project/

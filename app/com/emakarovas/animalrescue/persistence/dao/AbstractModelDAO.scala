@@ -45,7 +45,7 @@ trait AbstractModelDAO[T <: AbstractModel] extends AbstractDAO[T] {
   }
   
   def buildIndex(name: String, iType: IndexType, unique: Boolean): Index = {
-    val key = Seq((name, iType))
+    val key = Seq((MongoConstants.Data + "." + name, iType))
     Index(key, Some(name), unique)
   }
   

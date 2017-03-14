@@ -61,8 +61,9 @@ class AnimalReader @Inject()
     }
   }
 
-  override def read(doc: BSONDocument): AnimalModel = {
-    val id = doc.getAs[String](MongoConstants.MongoId).get
+  override def read(topDoc: BSONDocument): AnimalModel = {
+    val id = topDoc.getAs[String](MongoConstants.MongoId).get
+    val doc = topDoc.getAs[BSONDocument](MongoConstants.Data).get
     val animalType = doc.getAs[AnimalType](AnimalConstants.AnimalType).get
     val specificTypeOpt = doc.getAs[String](AnimalConstants.SpecificType)
     val gender = doc.getAs[Gender](AnimalConstants.Gender).get

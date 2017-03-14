@@ -17,15 +17,16 @@ class OfferWriter @Inject() (
   override def write(offer: OfferModel): BSONDocument = {
     BSONDocument(
         MongoConstants.MongoId -> offer.id,
-        OfferConstants.Url -> offer.url,
-        OfferConstants.StartDate -> offer.startDate,
-        OfferConstants.EndDate -> offer.endDate,
-        OfferConstants.Text -> offer.text,
-        OfferConstants.Image -> offer.image,
-        OfferConstants.Video -> offer.video,
-        OfferConstants.Location -> offer.location,
-        OfferConstants.CommentList -> offer.commentList,
-        OfferConstants.ViewedByUserIdList -> offer.viewedByUserIdList,
-        OfferConstants.UserId -> offer.userId)
+        MongoConstants.Data -> BSONDocument(
+            OfferConstants.Url -> offer.url,
+            OfferConstants.StartDate -> offer.startDate,
+            OfferConstants.EndDate -> offer.endDate,
+            OfferConstants.Text -> offer.text,
+            OfferConstants.Image -> offer.image,
+            OfferConstants.Video -> offer.video,
+            OfferConstants.Location -> offer.location,
+            OfferConstants.CommentList -> offer.commentList,
+            OfferConstants.ViewedByUserIdList -> offer.viewedByUserIdList,
+            OfferConstants.UserId -> offer.userId))
   }
 }

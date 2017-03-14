@@ -15,8 +15,7 @@ import com.emakarovas.animalrescue.model.property.SearchDeletableCollectionPrope
 import com.emakarovas.animalrescue.model.property.SearchInsertableCollectionProperty
 import com.emakarovas.animalrescue.model.property.SearchUpdatableCollectionProperty
 import com.emakarovas.animalrescue.model.property.SearchUpdatableProperty
-import com.emakarovas.animalrescue.persistence.dao.update.UpdatableModelContainer
-import com.emakarovas.animalrescue.persistence.dao.update.UpdateStatus
+import com.emakarovas.animalrescue.persistence.dao.update.VersionedModelContainer
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 import com.emakarovas.animalrescue.testutil.TestUtils
 
@@ -103,19 +102,18 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     
     "allow to update a SearchModel if no properties have been updated individually" in {
       delay()
-      val findF = defaultSearchDAO.lockAndFindById(search1.id)
+      val findF = defaultSearchDAO.findUpdatableById(search1.id)
       await(findF)
       val updF = findF.flatMap(updateOpt => {
         updateOpt.isDefined mustBe true
         val search = updateOpt.get.model
         search mustBe search1
         search1 = search1.copy(url="updated url 1")
-        defaultSearchDAO.update(UpdatableModelContainer[SearchModel](search1, updateOpt.get.token))
+        defaultSearchDAO.update(VersionedModelContainer[SearchModel](search1, updateOpt.get.version))
       })
       await(updF)
-      val updatedFindF = updF.flatMap(updRes => {
-        updRes.updateStatus mustBe UpdateStatus.Executed
-        updRes.n mustBe 1
+      val updatedFindF = updF.flatMap(n => {
+        n mustBe 1
         defaultSearchDAO.findById(search1.id)
       })
       await(updatedFindF)
@@ -151,7 +149,7 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     "deny update request when a property has been updated during model manipulation" in {
       delay()
       // find the model and lock it
-      val findF = defaultSearchDAO.lockAndFindById(search1.id)
+      val findF = defaultSearchDAO.findUpdatableById(search1.id)
       await(findF)
       // change model and issue a property update
       search1 = search1.copy(isPublic = !search1.isPublic)
@@ -159,13 +157,13 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       // try to update
       val modelUpdateF = findF.flatMap(
           op => {
-            val token = op.get.token
-            defaultSearchDAO.update(UpdatableModelContainer[SearchModel](search2, token))
+            val token = op.get.version
+            defaultSearchDAO.update(VersionedModelContainer[SearchModel](search2, token))
           }
       )
       await(modelUpdateF)
       modelUpdateF onSuccess {
-        case res => res.updateStatus mustBe UpdateStatus.Denied
+        case n => n mustBe 0
       }
 
     }

@@ -10,8 +10,7 @@ import com.emakarovas.animalrescue.model.OfferModel
 import com.emakarovas.animalrescue.model.VideoModel
 import com.emakarovas.animalrescue.model.property.OfferInsertableCollectionProperty
 import com.emakarovas.animalrescue.model.property.OfferUpdatableProperty
-import com.emakarovas.animalrescue.persistence.dao.update.UpdatableModelContainer
-import com.emakarovas.animalrescue.persistence.dao.update.UpdateStatus
+import com.emakarovas.animalrescue.persistence.dao.update.VersionedModelContainer
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 import com.emakarovas.animalrescue.testutil.TestUtils
 
@@ -91,19 +90,18 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     
     "allow to update an OfferModel if no properties have been updated individually" in {
       delay()
-      val findF = defaultOfferDAO.lockAndFindById(offer1.id)
+      val findF = defaultOfferDAO.findUpdatableById(offer1.id)
       await(findF)
       val updF = findF.flatMap(updateOpt => {
         updateOpt.isDefined mustBe true
         val offer = updateOpt.get.model
         offer mustBe offer1
         offer1 = offer1.copy(text="updated text 1")
-        defaultOfferDAO.update(UpdatableModelContainer[OfferModel](offer1, updateOpt.get.token))
+        defaultOfferDAO.update(VersionedModelContainer[OfferModel](offer1, updateOpt.get.version))
       })
       await(updF)
-      val updatedFindF = updF.flatMap(updRes => {
-        updRes.updateStatus mustBe UpdateStatus.Executed
-        updRes.n mustBe 1
+      val updatedFindF = updF.flatMap(n => {
+        n mustBe 1
         defaultOfferDAO.findById(offer1.id)
       })
       await(updatedFindF)
@@ -183,7 +181,7 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     "deny update request when a property has been updated during model manipulation" in {
       delay()
       // find the model and lock it
-      val findF = defaultOfferDAO.lockAndFindById(offer1.id)
+      val findF = defaultOfferDAO.findUpdatableById(offer1.id)
       await(findF)
       // change model and issue a property update
       offer1 = offer1.copy(text="updated for the billionth time")
@@ -191,13 +189,13 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       // try to update
       val modelUpdateF = findF.flatMap(
           op => {
-            val token = op.get.token
-            defaultOfferDAO.update(UpdatableModelContainer[OfferModel](offer2, token))
+            val token = op.get.version
+            defaultOfferDAO.update(VersionedModelContainer[OfferModel](offer2, token))
           }
       )
       await(modelUpdateF)
       modelUpdateF onSuccess {
-        case res => res.updateStatus mustBe UpdateStatus.Denied
+        case n => n mustBe 0
       }
 
     }

@@ -21,8 +21,9 @@ class OfferReader @Inject() (
     implicit val locationReader: LocationReader,
     implicit val commentReader: CommentReader) extends AbstractEntityReader[OfferModel] {
   
-  def read(doc: BSONDocument): OfferModel = {
-    val id = doc.getAs[String](MongoConstants.MongoId).get
+  def read(topDoc: BSONDocument): OfferModel = {
+    val id = topDoc.getAs[String](MongoConstants.MongoId).get
+    val doc = topDoc.getAs[BSONDocument](MongoConstants.Data).get
     val url = doc.getAs[String](OfferConstants.Url).get
     val startDate = doc.getAs[Date](OfferConstants.StartDate).get
     val endDate = doc.getAs[Date](OfferConstants.EndDate)

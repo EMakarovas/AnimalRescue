@@ -6,10 +6,10 @@ case class UserModel
   (override val id: String,
    email: String,
    hashedPassword: String,
-   salt: String,
+   salt: Option[String],
    activationString: Option[String],
    passwordResetString: Option[String],
-   person: PersonModel,
+   person: Option[PersonModel],
    settings: AccountSettingsModel) extends AbstractModel(id) with AbstractPersistableEntity
 
 case class PersonModel

@@ -14,7 +14,7 @@ case class SearchModel(
    startDate: Date,
    endDate: Option[Date],
    isPublic: Boolean,
-   userId: String) extends AbstractModel(id) with AbstracturlAccessibleEntity with AbstractPersistableEntity
+   userId: String) extends AbstractModel(id) with AbstractURLAccessibleEntity with AbstractPersistableEntity
 
 case class SearchAnimalModel(
    override val id: String,

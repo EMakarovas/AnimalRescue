@@ -9,134 +9,158 @@ import com.emakarovas.animalrescue.model.property.InsertableCollectionProperty
 import com.emakarovas.animalrescue.model.property.UpdatableCollectionProperty
 import com.emakarovas.animalrescue.model.property.UpdatableProperty
 import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
-import com.emakarovas.animalrescue.persistence.dao.update.UpdatableModelContainer
-import com.emakarovas.animalrescue.persistence.dao.update.UpdateResult
-import com.emakarovas.animalrescue.persistence.dao.update.UpdateStatus
+import com.emakarovas.animalrescue.persistence.dao.update.VersionedModelContainer
 import com.emakarovas.animalrescue.persistence.writer.property.PropertyWriter
 import com.emakarovas.animalrescue.util.generator.StringGenerator
 
 import reactivemongo.bson.BSONDocument
+import com.emakarovas.animalrescue.persistence.writer.AbstractEntityWriter
+import com.emakarovas.animalrescue.model.constants.OfferDetailsConstants
+import com.emakarovas.animalrescue.model.OfferDetailsModel
+import reactivemongo.bson.BSONDocumentReader
+import reactivemongo.bson.BSONDocumentWriter
+import com.emakarovas.animalrescue.model.property.unique.UniqueProperty
+import reactivemongo.bson.BSONValue
 
 trait AbstractUpdatableModelDAO[T <: AbstractModel with AbstractPersistableEntity] extends AbstractModelDAO[T] {
   
   import scala.concurrent.ExecutionContext.Implicits.global
   
-  protected def stringGenerator: StringGenerator
   // used to write update properties
-  implicit protected def propertyWriter: PropertyWriter[T]
-  // key is ID, value is token
-  protected var activeUpdateTokenMap = scala.collection.mutable.Map[String, String]()
+  implicit protected def propertyWriter: PropertyWriter[T]  
   
+  implicit object versionedModelContainerReader extends BSONDocumentReader[VersionedModelContainer[T]] {
+    override def read(doc: BSONDocument): VersionedModelContainer[T] = {
+      val model = reader.read(doc)
+      val version = doc.getAs[Int](MongoConstants.Version).get
+      VersionedModelContainer[T](model, version)
+    }
+  }
   
-  def lockAndFindById(id: String): Future[Option[UpdatableModelContainer[T]]] = {
-    val token = stringGenerator.generate(20);
-    activeUpdateTokenMap += (id -> token)
+  implicit object versionedModelContainerWriter extends BSONDocumentWriter[VersionedModelContainer[T]] {
+    override def write(container: VersionedModelContainer[T]): BSONDocument = {
+      var doc = writer.write(container.model)
+      doc = doc ++ BSONDocument(MongoConstants.Version -> container.version)
+      doc
+    }
+  }
+  
+  override def create(obj: T): Future[Int] = {
+    createList += obj
+    val container = VersionedModelContainer[T](obj, 1)
+    val f = collection.flatMap(_.insert(container))
+    f onSuccess {
+      case _ => createList -= obj
+    }
+    f.map(writeRes => writeRes.n)
+  }
+  
+  def findUpdatableById(id: String): Future[Option[VersionedModelContainer[T]]] = {
     val query = BSONDocument(MongoConstants.MongoId -> id)
-    val f = collection.flatMap(_.find(query).one)
-    f.map((op) => {
-      op match {
-        case Some(model) => Some(UpdatableModelContainer[T](model, token))
-        case None => {
-          clearActiveUpdateToken(id)
-          None
-        }
-      }
-    })
+    collection.flatMap(_.find(query).one)
+  }
+  
+  def findUpdatableByUniqueProperty(property: UniqueProperty[T, Any]): Future[Option[VersionedModelContainer[T]]] = {
+    val query = BSONDocument(MongoConstants.Data + "." + property.propertyName -> property.propertyValue)
+    collection.flatMap(_.find(query).one)
   }
 
-  def update(container: UpdatableModelContainer[T]): Future[UpdateResult] = {
-    val activeUpdateToken = activeUpdateTokenMap.get(container.model.id)
-    if(activeUpdateToken.isEmpty || activeUpdateToken.get!=container.token)
-      return Future { UpdateResult(UpdateStatus.Denied, 0) }
+  def update(container: VersionedModelContainer[T]): Future[Int] = {
     val model = container.model
-    val selector = BSONDocument(MongoConstants.MongoId -> model.id)
-    collection.flatMap(_.update(selector, model)).map(writeRes => UpdateResult(UpdateStatus.Executed, writeRes.nModified))
+    val selector = BSONDocument(MongoConstants.MongoId -> model.id,
+        MongoConstants.Version -> container.version)
+    val update = BSONDocument("$set" -> writer.write(model))
+    val versionedUpdate = incrementVersion(update)
+    collection.flatMap(_.update(selector, versionedUpdate)).map(writeRes => writeRes.nModified)
   }
   
   def updatePropertyById(id: String, property: UpdatableProperty[T, Any]): Future[Int] = {
-    clearActiveUpdateToken(id)
     val selector = BSONDocument(MongoConstants.MongoId -> id)
     val update = 
       if(isNone(property.value))
         getUpdateQueryUnset(property.name)
       else getUpdateQuerySet(property.name, property.value)
-    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.nModified)
+    val versionedUpdate = incrementVersion(update)
+    collection.flatMap(_.update(selector, versionedUpdate)).map(writeRes => writeRes.nModified)
   }
   
   // used when the value is defined (not None)
   protected def getUpdateQuerySet(propName: String, propValue: Any): BSONDocument = {
     BSONDocument(
         "$set" -> BSONDocument(
-            propName -> propValue))
+            MongoConstants.Data + "." + propName -> propValue))
   }
   
   // used when the value is None
   protected def getUpdateQueryUnset(propName: String): BSONDocument = {
     BSONDocument(
         "$unset" -> BSONDocument(
-            propName -> 1))
+            MongoConstants.Data + "." + propName -> 1))
   }
   
   def updateCollectionPropertyById(id: String, property: UpdatableCollectionProperty[T, Any]): Future[Int] = {
-    clearActiveUpdateToken(id)
     val selector = BSONDocument(
         MongoConstants.MongoId -> id,
-        property.collectionName -> BSONDocument(
+        MongoConstants.Data + "." + property.collectionName -> BSONDocument(
              "$elemMatch" -> BSONDocument(
                 MongoConstants.MongoId -> property.entityId)))
     val update = 
       if(isNone(property.value))
         getUpdateCollectionQueryUnset(property.collectionName, property.propertyName)
       else getUpdateCollectionQuerySet(property.collectionName, property.propertyName, property.value)
-        
-    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.nModified)
+    val versionedUpdate = incrementVersion(update)
+    collection.flatMap(_.update(selector, versionedUpdate)).map(writeRes => writeRes.nModified)
   }
   
   // used when the value is defined (not None)
   protected def getUpdateCollectionQuerySet(colName: String, propName: String, propValue: Any): BSONDocument = {
     BSONDocument(
         "$set" -> BSONDocument(
-            colName + ".$." + propName -> propValue))
+            MongoConstants.Data + "." + colName + ".$." + propName -> propValue))
   }
   
   // used when the value is None
   protected def getUpdateCollectionQueryUnset(colName: String, propName: String): BSONDocument = {
     BSONDocument(
         "$unset" -> BSONDocument(
-            colName + ".$." + propName -> "''"))
+            MongoConstants.Data + "." + colName + ".$." + propName -> "''"))
   }
   
   def insertCollectionPropertyById(id: String, property: InsertableCollectionProperty[T, Any]): Future[Int] = {
-    clearActiveUpdateToken(id)
     val selector = BSONDocument(
         MongoConstants.MongoId -> id)
     val update = getInsertCollectionQuerySet(property.collectionName, property.value)
-    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.nModified)
+    val versionedUpdate = incrementVersion(update)
+    collection.flatMap(_.update(selector, versionedUpdate)).map(writeRes => writeRes.nModified)
   }
   
   protected def getInsertCollectionQuerySet(colName: String, propValue: Any): BSONDocument = {
     BSONDocument(
         "$push" -> BSONDocument(
-            colName -> propValue))
+            MongoConstants.Data + "." + colName -> propValue))
   }
   
   def deleteCollectionPropertyById(id: String, property: DeletableCollectionProperty[T, Any]): Future[Int] = {
-    clearActiveUpdateToken(id)
     val selector = BSONDocument(
         MongoConstants.MongoId -> id)
     val update = getDeleteCollectionPropertyQuery(property.entityId, property.collectionName)
-    collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.nModified)
+    val versionedUpdate = incrementVersion(update)
+    collection.flatMap(_.update(selector, versionedUpdate)).map(writeRes => writeRes.nModified)
   }
   
   protected def getDeleteCollectionPropertyQuery(id: String, colName: String): BSONDocument = {
     BSONDocument(
         "$pull" -> BSONDocument(
-            colName -> BSONDocument(
+            MongoConstants.Data + "." + colName -> BSONDocument(
                 MongoConstants.MongoId -> id)))        
   }
-  
-  protected def clearActiveUpdateToken(modelId: String) = activeUpdateTokenMap -= modelId
-  
+
   protected def isNone(value: Any): Boolean = value.isInstanceOf[Option[_]] && value.asInstanceOf[Option[_]].isEmpty
+  
+  protected def incrementVersion(update: BSONDocument): BSONDocument = {
+    update ++ BSONDocument(
+        "$inc" -> BSONDocument(
+            MongoConstants.Version -> 1))
+  }
   
 }

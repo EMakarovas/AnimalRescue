@@ -23,7 +23,7 @@ import reactivemongo.bson.BSONDocument
 @Singleton
 class DefaultOfferDAO @Inject() (
     val colFactory: MongoCollectionFactory,
-    override val stringGenerator: StringGenerator,
+    val stringGenerator: StringGenerator,
     implicit override val writer: OfferWriter,
     implicit override val reader: OfferReader,
     implicit override val propertyWriter: OfferPropertyWriter) extends OfferDAO {
@@ -41,7 +41,7 @@ class DefaultOfferDAO @Inject() (
   setUpIndexes(indexList)
   
   override def findByUserId(userId: String): Future[List[OfferModel]] = {
-    val selector = BSONDocument(OfferConstants.UserId -> userId)
+    val selector = BSONDocument(MongoConstants.Data + "." + OfferConstants.UserId -> userId)
     collection.flatMap(_.find(selector)
         .cursor[OfferModel]()
         .collect[List](Int.MaxValue, Cursor.FailOnError[List[OfferModel]]()))
@@ -50,7 +50,7 @@ class DefaultOfferDAO @Inject() (
   override def addToViewedByUserIdListById(offerId: String, userId: String): Future[Int] = {
     val selector = BSONDocument(MongoConstants.MongoId -> offerId)
     val update = BSONDocument("$addToSet" -> BSONDocument(
-        "viewedByUserIdList" -> userId))
+        MongoConstants.Data + "." + OfferConstants.ViewedByUserIdList -> userId))
     collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.nModified)
   }
   

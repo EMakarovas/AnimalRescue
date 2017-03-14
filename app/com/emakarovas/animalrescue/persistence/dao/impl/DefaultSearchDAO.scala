@@ -24,7 +24,7 @@ import reactivemongo.bson.BSONDocument
 @Singleton
 class DefaultSearchDAO @Inject() (
     val colFactory: MongoCollectionFactory,
-    override val stringGenerator: StringGenerator,
+    val stringGenerator: StringGenerator,
     implicit override val writer: SearchWriter,
     implicit override val reader: SearchReader,
     implicit override val propertyWriter: SearchPropertyWriter) extends SearchDAO {
@@ -48,7 +48,7 @@ class DefaultSearchDAO @Inject() (
   setUpIndexes(indexList)
  
   override def findByUserId(userId: String): Future[List[SearchModel]] = {
-    val selector = BSONDocument(SearchConstants.UserId -> userId)
+    val selector = BSONDocument(MongoConstants.Data + "." + SearchConstants.UserId -> userId)
     collection.flatMap(_.find(selector)
         .cursor[SearchModel]()
         .collect[List](Int.MaxValue, Cursor.FailOnError[List[SearchModel]]()))
@@ -57,11 +57,11 @@ class DefaultSearchDAO @Inject() (
   override def addToPotentialAnimalIdListBySearchAnimalId(id: String, searchAnimalId: String, potentialAnimalId: String): Future[Int] = {
     val selector = BSONDocument(
         MongoConstants.MongoId -> id,
-        SearchConstants.SearchAnimalList -> BSONDocument(
+        MongoConstants.Data + "." + SearchConstants.SearchAnimalList -> BSONDocument(
              "$elemMatch" -> BSONDocument(
                  MongoConstants.MongoId -> searchAnimalId)))
     val update = BSONDocument("$addToSet" -> BSONDocument(
-        SearchConstants.SearchAnimalList + ".$." + SearchAnimalConstants.PotentialAnimalIdList -> potentialAnimalId))
+        MongoConstants.Data + "." + SearchConstants.SearchAnimalList + ".$." + SearchAnimalConstants.PotentialAnimalIdList -> potentialAnimalId))
     collection.flatMap(_.update(selector, update)).map(writeRes => writeRes.nModified)
   }
   

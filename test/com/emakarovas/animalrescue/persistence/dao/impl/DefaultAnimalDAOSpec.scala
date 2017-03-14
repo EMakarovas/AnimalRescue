@@ -12,8 +12,7 @@ import com.emakarovas.animalrescue.model.enumeration.AnimalType
 import com.emakarovas.animalrescue.model.enumeration.Gender
 import com.emakarovas.animalrescue.model.enumeration.OfferTerminationReason
 import com.emakarovas.animalrescue.model.property.AnimalUpdatableProperty
-import com.emakarovas.animalrescue.persistence.dao.update.UpdatableModelContainer
-import com.emakarovas.animalrescue.persistence.dao.update.UpdateStatus
+import com.emakarovas.animalrescue.persistence.dao.update.VersionedModelContainer
 import com.emakarovas.animalrescue.testutil.DelayedPlaySpec
 import com.emakarovas.animalrescue.testutil.TestUtils
 
@@ -90,19 +89,18 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     
     "allow to update an AnimalModel if no properties have been updated individually" in {
       delay()
-      val findF = defaultAnimalDAO.lockAndFindById(animal1.id)
+      val findF = defaultAnimalDAO.findUpdatableById(animal1.id)
       await(findF)
       val updF = findF.flatMap(updateOpt => {
         updateOpt.isDefined mustBe true
         val animal = updateOpt.get.model
         animal mustBe animal1
         animal1 = animal1.copy(description=Some("updated description 1"))
-        defaultAnimalDAO.update(UpdatableModelContainer[AnimalModel](animal1, updateOpt.get.token))
+        defaultAnimalDAO.update(VersionedModelContainer[AnimalModel](animal1, updateOpt.get.version))
       })
       await(updF)
-      val updatedFindF = updF.flatMap(updRes => {
-        updRes.updateStatus mustBe UpdateStatus.Executed
-        updRes.n mustBe 1
+      val updatedFindF = updF.flatMap(n => {
+        n mustBe 1
         defaultAnimalDAO.findById(animal1.id)
       })
       await(updatedFindF)
@@ -270,7 +268,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     "deny update request when a property has been updated during model manipulation" in {
       delay()
       // find the model and lock it
-      val findF = defaultAnimalDAO.lockAndFindById(animal1.id)
+      val findF = defaultAnimalDAO.findUpdatableById(animal1.id)
       await(findF)
       // change model and issue a property update
       animal1 = animal1.copy(name = Some("updated again name"))
@@ -278,13 +276,13 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       // try to update
       val modelUpdateF = findF.flatMap(
           op => {
-            val token = op.get.token
-            defaultAnimalDAO.update(UpdatableModelContainer[AnimalModel](animal2, token))
+            val token = op.get.version
+            defaultAnimalDAO.update(VersionedModelContainer[AnimalModel](animal2, token))
           }
       )
       await(modelUpdateF)
       modelUpdateF onSuccess {
-        case res => res.updateStatus mustBe UpdateStatus.Denied
+        case n => n mustBe 0
       }
 
     }

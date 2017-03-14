@@ -56,17 +56,18 @@ class AnimalWriter @Inject() (
   override def write(animal: AnimalModel): BSONDocument = {
     BSONDocument(
         MongoConstants.MongoId -> animal.id,
-        AnimalConstants.AnimalType -> animal.animalType,
-        AnimalConstants.SpecificType -> animal.specificType,
-        AnimalConstants.Gender -> animal.gender,
-        AnimalConstants.Name -> animal.name,
-        AnimalConstants.Age -> animal.age,
-        AnimalConstants.Description -> animal.description,
-        AnimalConstants.IsCastrated -> animal.isCastrated,
-        AnimalConstants.Image -> animal.image,
-        AnimalConstants.Video -> animal.video,
-        AnimalConstants.AdoptionDetails -> animal.adoptionDetails,
-        AnimalConstants.OfferDetails -> animal.offerDetails)
+        MongoConstants.Data -> BSONDocument(
+            AnimalConstants.AnimalType -> animal.animalType,
+            AnimalConstants.SpecificType -> animal.specificType,
+            AnimalConstants.Gender -> animal.gender,
+            AnimalConstants.Name -> animal.name,
+            AnimalConstants.Age -> animal.age,
+            AnimalConstants.Description -> animal.description,
+            AnimalConstants.IsCastrated -> animal.isCastrated,
+            AnimalConstants.Image -> animal.image,
+            AnimalConstants.Video -> animal.video,
+            AnimalConstants.AdoptionDetails -> animal.adoptionDetails,
+            AnimalConstants.OfferDetails -> animal.offerDetails))
   } 
   
 }
