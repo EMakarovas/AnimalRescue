@@ -1,6 +1,6 @@
 package com.emakarovas.animalrescue.util.builder
 
-import com.emakarovas.animalrescue.model.AbstracturlAccessibleEntity
+import com.emakarovas.animalrescue.model.AbstractURLAccessibleEntity
 
-trait AbstractURLBuilder[T <: AbstracturlAccessibleEntity] {  
+trait AbstractURLBuilder[T <: AbstractURLAccessibleEntity] {  
 }

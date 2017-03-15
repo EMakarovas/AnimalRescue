@@ -5,7 +5,6 @@ import scala.concurrent.Future
 import com.emakarovas.animalrescue.model.AnimalModel
 import com.emakarovas.animalrescue.model.constants.AdoptionDetailsConstants
 import com.emakarovas.animalrescue.model.constants.AnimalConstants
-import com.emakarovas.animalrescue.model.constants.OfferDetailsConstants
 import com.emakarovas.animalrescue.persistence.dao.AnimalDAO
 import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
 import com.emakarovas.animalrescue.persistence.mongo.Animal
@@ -38,17 +37,9 @@ class DefaultAnimalDAO @Inject() (
       buildIndex(AnimalConstants.Gender, IndexType.Ascending, false),
       buildIndex(AnimalConstants.Age, IndexType.Ascending, false),
       buildIndex(AnimalConstants.IsCastrated, IndexType.Ascending, false),
-      buildIndex(AnimalConstants.AdoptionDetails + "." + AdoptionDetailsConstants.OwnerId, IndexType.Ascending, false),
-      buildIndex(AnimalConstants.OfferDetails + "." + OfferDetailsConstants.OfferId, IndexType.Ascending, false)
+      buildIndex(AnimalConstants.AdoptionDetails + "." + AdoptionDetailsConstants.OwnerId, IndexType.Ascending, false)
   )  
   setUpIndexes(indexList)
-  
-  override def findByOfferId(offerId: String): Future[List[AnimalModel]] = {
-    val selector = BSONDocument(MongoConstants.Data + "." + AnimalConstants.OfferDetails + "." + OfferDetailsConstants.OfferId -> offerId)
-    collection.flatMap(_.find(selector)
-        .cursor[AnimalModel]()
-        .collect[List](Int.MaxValue, Cursor.FailOnError[List[AnimalModel]]()))
-  }
   
   override def findByOwnerId(ownerId: String): Future[List[AnimalModel]] = {
     val selector = BSONDocument(MongoConstants.Data + "." + AnimalConstants.AdoptionDetails + "." + AdoptionDetailsConstants.OwnerId -> ownerId)

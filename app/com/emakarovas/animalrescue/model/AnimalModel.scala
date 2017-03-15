@@ -4,10 +4,15 @@ import java.util.Date
 
 import com.emakarovas.animalrescue.model.enumeration.AnimalType
 import com.emakarovas.animalrescue.model.enumeration.Gender
-import com.emakarovas.animalrescue.model.enumeration.OfferTerminationReason
 
+/*
+ * TODO - not finished
+ * This will probably take a while to be finalized
+ * Just carrying on with everything else
+ */
 case class AnimalModel
   (override val id: String,
+   override val url: String,
    override val animalType: AnimalType,
    override val specificType: Option[String],
    override val gender: Gender,
@@ -17,21 +22,8 @@ case class AnimalModel
    isCastrated: Boolean,
    image: Option[ImageModel],
    video: Option[VideoModel],
-   adoptionDetails: Option[AdoptionDetailsModel],
-   offerDetails: Option[OfferDetailsModel])
-   extends AbstractModel(id) with AbstractAnimalEntity with AbstractPersistableEntity
-
-case class OfferDetailsModel
-  (castrationCost: Option[Double],
-   foodCost: Option[Double],
-   shelterCost: Option[Double],
-   vaccinationCost: Option[Double],
-   offerId: String,
-   offerTerminationReason: Option[OfferTerminationReasonModel]) extends AbstractEntity
-
-case class OfferTerminationReasonModel
-  (offerTerminationReason: OfferTerminationReason,
-   text: Option[String]) extends AbstractEntity
+   adoptionDetails: Option[AdoptionDetailsModel])
+   extends AbstractModel(id) with AbstractAnimalEntity with AbstractPersistableEntity with AbstractURLAccessibleEntity
 
 case class AdoptionDetailsModel
   (ownerId: Option[String], // ID of the user

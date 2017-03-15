@@ -123,22 +123,22 @@ class DefaultUserDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           settings = AccountSettingsModel(false)
       )
       
-      val nameProp = UserUpdatableProperty.UserPersonNameProperty(user1.person.get.name)
+      val nameProp = UserUpdatableProperty.PersonName(user1.person.get.name)
       val updF1 = defaultUserDAO.updatePropertyById(user1.id, nameProp)
       
-      val surnameProp = UserUpdatableProperty.UserPersonSurnameProperty(user1.person.get.surname)
+      val surnameProp = UserUpdatableProperty.PersonSurname(user1.person.get.surname)
       val updF2 = defaultUserDAO.updatePropertyById(user1.id, surnameProp)
       
-      val genderProp = UserUpdatableProperty.UserPersonGenderProperty(user1.person.get.gender)
+      val genderProp = UserUpdatableProperty.PersonGender(user1.person.get.gender)
       val updF3 = defaultUserDAO.updatePropertyById(user1.id, genderProp)
       
-      val phoneProp = UserUpdatableProperty.UserPersonPhoneNumberProperty(user1.person.get.phoneNumber)
+      val phoneProp = UserUpdatableProperty.PersonPhoneNumber(user1.person.get.phoneNumber)
       val updF4 = defaultUserDAO.updatePropertyById(user1.id, phoneProp)
       
-      val imgProp = UserUpdatableProperty.UserPersonImageProperty(user1.person.get.image)
+      val imgProp = UserUpdatableProperty.PersonImage(user1.person.get.image)
       val updF5 = defaultUserDAO.updatePropertyById(user1.id, imgProp)
       
-      val settingsProp = UserUpdatableProperty.UserSettingsSendEmailsWithMatchesProperty(user1.settings.sendEmailsWithMatches)
+      val settingsProp = UserUpdatableProperty.SettingsSendEmailsWithMatches(user1.settings.sendEmailsWithMatches)
       val updF6 = defaultUserDAO.updatePropertyById(user1.id, settingsProp)
 
       val compF = for {
@@ -175,13 +175,13 @@ class DefaultUserDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           person = Some(newPerson)
       )
       
-      val surnameProp = UserUpdatableProperty.UserPersonSurnameProperty(user1.person.get.surname)
+      val surnameProp = UserUpdatableProperty.PersonSurname(user1.person.get.surname)
       val updF1 = defaultUserDAO.updatePropertyById(user1.id, surnameProp)
       
-      val phoneProp = UserUpdatableProperty.UserPersonPhoneNumberProperty(user1.person.get.phoneNumber)
+      val phoneProp = UserUpdatableProperty.PersonPhoneNumber(user1.person.get.phoneNumber)
       val updF2 = defaultUserDAO.updatePropertyById(user1.id, phoneProp)
       
-      val imgProp = UserUpdatableProperty.UserPersonImageProperty(user1.person.get.image)
+      val imgProp = UserUpdatableProperty.PersonImage(user1.person.get.image)
       val updF3 = defaultUserDAO.updatePropertyById(user1.id, imgProp)
 
       val compF = for {
@@ -212,7 +212,7 @@ class DefaultUserDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
               name = "different name once again"
           ))
       )
-      defaultUserDAO.updatePropertyById(user1.id, UserUpdatableProperty.UserPersonNameProperty(user1.person.get.name))
+      defaultUserDAO.updatePropertyById(user1.id, UserUpdatableProperty.PersonName(user1.person.get.name))
       // try to update
       val modelUpdateF = findF.flatMap(
           op => {

@@ -9,6 +9,6 @@ sealed abstract class SearchUpdatableProperty[T](
     override val name: String, override val value: T) extends UpdatableProperty[SearchModel, T] with SearchProperty
     
 object SearchUpdatableProperty {
-  case class SearchIsPublicProperty(override val value: Boolean) 
+  case class IsPublic(override val value: Boolean) 
     extends SearchUpdatableProperty[Boolean](SearchConstants.IsPublic, value)
 }

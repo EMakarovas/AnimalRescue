@@ -5,7 +5,6 @@ import scala.concurrent.Future
 import com.emakarovas.animalrescue.model.AdoptionDetailsModel
 import com.emakarovas.animalrescue.model.AnimalModel
 import com.emakarovas.animalrescue.model.ImageModel
-import com.emakarovas.animalrescue.model.OfferDetailsModel
 import com.emakarovas.animalrescue.model.VideoModel
 import com.emakarovas.animalrescue.model.enumeration.AnimalType
 import com.emakarovas.animalrescue.model.enumeration.Gender
@@ -21,7 +20,6 @@ trait AnimalService {
       isCastrated: Boolean,
       image: Option[ImageModel],
       video: Option[VideoModel],
-      offerDetails: Option[OfferDetailsModel],
       adoptionDetails: Option[AdoptionDetailsModel]): Future[Unit]
       
   def findByOwnerId(ownerId: String): Future[List[AnimalModel]]

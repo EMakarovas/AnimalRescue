@@ -9,8 +9,8 @@ sealed abstract class SearchInsertableCollectionProperty[T](
     override val collectionName: String, override val value: T) extends InsertableCollectionProperty[SearchModel, T] with SearchProperty
     
 object SearchInsertableCollectionProperty {
-  case class SearchCommentInsertableCollectionProperty(override val value: CommentModel)
+  case class Comment(override val value: CommentModel)
     extends SearchInsertableCollectionProperty[CommentModel](SearchConstants.CommentList, value)
-  case class SearchSearchAnimalInsertableCollectionProperty(override val value: SearchAnimalModel)
+  case class SearchAnimal(override val value: SearchAnimalModel)
     extends SearchInsertableCollectionProperty[SearchAnimalModel](SearchConstants.SearchAnimalList, value)
 }

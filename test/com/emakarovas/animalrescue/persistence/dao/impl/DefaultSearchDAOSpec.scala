@@ -132,7 +132,7 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           isPublic = !search1.isPublic
       )
       
-      val pubProp = SearchUpdatableProperty.SearchIsPublicProperty(search1.isPublic)
+      val pubProp = SearchUpdatableProperty.IsPublic(search1.isPublic)
       val updF1 = defaultSearchDAO.updatePropertyById(search1.id, pubProp)
       await(updF1)
       
@@ -153,7 +153,7 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       await(findF)
       // change model and issue a property update
       search1 = search1.copy(isPublic = !search1.isPublic)
-      defaultSearchDAO.updatePropertyById(search1.id, SearchUpdatableProperty.SearchIsPublicProperty(search1.isPublic))
+      defaultSearchDAO.updatePropertyById(search1.id, SearchUpdatableProperty.IsPublic(search1.isPublic))
       // try to update
       val modelUpdateF = findF.flatMap(
           op => {
@@ -181,10 +181,10 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           searchAnimalList = search1.searchAnimalList ::: List(newSearchAnimal)
       )
       
-      val comProp = SearchInsertableCollectionProperty.SearchCommentInsertableCollectionProperty(newComment)
+      val comProp = SearchInsertableCollectionProperty.Comment(newComment)
       val updF1 = defaultSearchDAO.insertCollectionPropertyById(search1.id, comProp)
       
-      val anProp = SearchInsertableCollectionProperty.SearchSearchAnimalInsertableCollectionProperty(newSearchAnimal)
+      val anProp = SearchInsertableCollectionProperty.SearchAnimal(newSearchAnimal)
       val updF2 = defaultSearchDAO.insertCollectionPropertyById(search1.id, anProp)
       
       val compF = for {
@@ -217,19 +217,19 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           searchAnimalList = newList
       )
       
-      val specTypeProp = SearchUpdatableCollectionProperty.SearchAnimalListSpecificTypeProperty(
+      val specTypeProp = SearchUpdatableCollectionProperty.SearchAnimalListSpecificType(
           updatedSearchAnimal.id, updatedSearchAnimal.specificType)
       val updF1 = defaultSearchDAO.updateCollectionPropertyById(search1.id, specTypeProp)
       
-      val genProp = SearchUpdatableCollectionProperty.SearchAnimalListGenderProperty(
+      val genProp = SearchUpdatableCollectionProperty.SearchAnimalListGender(
           updatedSearchAnimal.id, updatedSearchAnimal.gender)
       val updF2 = defaultSearchDAO.updateCollectionPropertyById(search1.id, genProp)
       
-      val minAgeProp = SearchUpdatableCollectionProperty.SearchAnimalListMinAgeProperty(
+      val minAgeProp = SearchUpdatableCollectionProperty.SearchAnimalListMinAge(
           updatedSearchAnimal.id, updatedSearchAnimal.minAge)
       val updF3 = defaultSearchDAO.updateCollectionPropertyById(search1.id, minAgeProp)
       
-      val maxAgeProp = SearchUpdatableCollectionProperty.SearchAnimalListMaxAgeProperty(
+      val maxAgeProp = SearchUpdatableCollectionProperty.SearchAnimalListMaxAge(
           updatedSearchAnimal.id, updatedSearchAnimal.maxAge)
       val updF4 = defaultSearchDAO.updateCollectionPropertyById(search1.id, maxAgeProp)
       
@@ -264,15 +264,15 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           searchAnimalList = newList
       )
       
-      val specTypeProp = SearchUpdatableCollectionProperty.SearchAnimalListSpecificTypeProperty(
+      val specTypeProp = SearchUpdatableCollectionProperty.SearchAnimalListSpecificType(
           updatedSearchAnimal.id, updatedSearchAnimal.specificType)
       val updF1 = defaultSearchDAO.updateCollectionPropertyById(search1.id, specTypeProp)
       
-      val minAgeProp = SearchUpdatableCollectionProperty.SearchAnimalListMinAgeProperty(
+      val minAgeProp = SearchUpdatableCollectionProperty.SearchAnimalListMinAge(
           updatedSearchAnimal.id, updatedSearchAnimal.minAge)
       val updF2 = defaultSearchDAO.updateCollectionPropertyById(search1.id, minAgeProp)
       
-      val maxAgeProp = SearchUpdatableCollectionProperty.SearchAnimalListMaxAgeProperty(
+      val maxAgeProp = SearchUpdatableCollectionProperty.SearchAnimalListMaxAge(
           updatedSearchAnimal.id, updatedSearchAnimal.maxAge)
       val updF3 = defaultSearchDAO.updateCollectionPropertyById(search1.id, maxAgeProp)
       
@@ -298,7 +298,7 @@ class DefaultSearchDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
           searchAnimalList = search1.searchAnimalList.slice(1, search1.searchAnimalList.size)
       )
       
-      val prop = SearchDeletableCollectionProperty.SearchSearchAnimalDeletableCollectionProperty(deletedAnimalId)
+      val prop = SearchDeletableCollectionProperty.SearchAnimal(deletedAnimalId)
       val updF = defaultSearchDAO.deleteCollectionPropertyById(search1.id, prop)
       await(updF)
       val findF = updF.flatMap(_ => defaultSearchDAO.findById(search1.id))

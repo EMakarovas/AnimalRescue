@@ -10,16 +10,16 @@ sealed abstract class SearchUpdatableCollectionProperty[T](
     extends UpdatableCollectionProperty[SearchModel, T] with SearchProperty
     
 object SearchUpdatableCollectionProperty {
-  case class SearchAnimalListSpecificTypeProperty(
+  case class SearchAnimalListSpecificType(
       override val entityId: String, override val value: Option[String])
       extends SearchUpdatableCollectionProperty[Option[String]](entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.SpecificType, value)
-  case class SearchAnimalListGenderProperty(
+  case class SearchAnimalListGender(
       override val entityId: String, override val value: Gender)
       extends SearchUpdatableCollectionProperty[Gender](entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.Gender, value)
-  case class SearchAnimalListMinAgeProperty(
+  case class SearchAnimalListMinAge(
       override val entityId: String, override val value: Option[Int])
       extends SearchUpdatableCollectionProperty[Option[Int]](entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.MinAge, value)
-  case class SearchAnimalListMaxAgeProperty(
+  case class SearchAnimalListMaxAge(
       override val entityId: String, override val value: Option[Int])
       extends SearchUpdatableCollectionProperty[Option[Int]](entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.MaxAge, value)
 }

@@ -15,8 +15,6 @@ import com.emakarovas.animalrescue.util.generator.StringGenerator
 
 import reactivemongo.bson.BSONDocument
 import com.emakarovas.animalrescue.persistence.writer.AbstractEntityWriter
-import com.emakarovas.animalrescue.model.constants.OfferDetailsConstants
-import com.emakarovas.animalrescue.model.OfferDetailsModel
 import reactivemongo.bson.BSONDocumentReader
 import reactivemongo.bson.BSONDocumentWriter
 import com.emakarovas.animalrescue.model.property.unique.UniqueProperty
