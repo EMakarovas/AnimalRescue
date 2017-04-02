@@ -10,10 +10,7 @@ import reactivemongo.bson.BSONValue
 class OfferTerminationReasonReader extends EnumerationReader[OfferTerminationReason] {
   override def read(bson: BSONValue): OfferTerminationReason =
     bson match {
-      case BSONString("GaveToUser") => OfferTerminationReason.GaveToUser
-      case BSONString("GaveToSomeoneElse") => OfferTerminationReason.GaveToSomeoneElse
-      case BSONString("KeptIt") => OfferTerminationReason.KeptIt
-      case BSONString("Other") => OfferTerminationReason.Other
-      case _ => throw new EnumerationNotFoundException
+      case BSONString(str) => OfferTerminationReason.valueOf(str)
+      case _ => throw new IllegalBSONValueException()
     }
 }

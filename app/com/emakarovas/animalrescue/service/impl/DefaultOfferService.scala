@@ -3,7 +3,7 @@ package com.emakarovas.animalrescue.service.impl
 import scala.concurrent.Future
 
 import com.emakarovas.animalrescue.model.ImageModel
-import com.emakarovas.animalrescue.model.LocationModel
+import com.emakarovas.animalrescue.model.Location
 import com.emakarovas.animalrescue.model.OfferModel
 import com.emakarovas.animalrescue.model.VideoModel
 import com.emakarovas.animalrescue.model.enumeration.ModelType

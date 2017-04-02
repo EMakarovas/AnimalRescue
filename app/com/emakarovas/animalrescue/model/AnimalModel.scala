@@ -2,8 +2,10 @@ package com.emakarovas.animalrescue.model
 
 import java.util.Date
 
-import com.emakarovas.animalrescue.model.enumeration.AnimalType
+import com.emakarovas.animalrescue.model.enumeration.Animal
+import com.emakarovas.animalrescue.model.enumeration.Color
 import com.emakarovas.animalrescue.model.enumeration.Gender
+import com.emakarovas.animalrescue.model.enumeration.Size
 
 /*
  * TODO - not finished
@@ -13,18 +15,20 @@ import com.emakarovas.animalrescue.model.enumeration.Gender
 case class AnimalModel
   (override val id: String,
    override val url: String,
-   override val animalType: AnimalType,
-   override val specificType: Option[String],
-   override val gender: Gender,
+   animalTypeDetails: AnimalTypeDetails[_ <: Animal],
+   gender: Option[Gender],
    name: Option[String],
-   age: Option[Int], // stored as months
+   age: Int, // stored as months
    description: Option[String],
+   colorSet: Set[Color],
+   size: Size,
+   tagSet: Set[String],
    isCastrated: Boolean,
    image: Option[ImageModel],
    video: Option[VideoModel],
-   adoptionDetails: Option[AdoptionDetailsModel])
-   extends AbstractModel(id) with AbstractAnimalEntity with AbstractPersistableEntity with AbstractURLAccessibleEntity
+   adoptionDetails: Option[AdoptionDetails])
+   extends AbstractModel(id) with AbstractPersistableEntity with AbstractURLAccessibleEntity
 
-case class AdoptionDetailsModel
+case class AdoptionDetails
   (ownerId: Option[String], // ID of the user
    date: Date) extends AbstractEntity

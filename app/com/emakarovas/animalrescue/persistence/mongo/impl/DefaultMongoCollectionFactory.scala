@@ -2,14 +2,9 @@ package com.emakarovas.animalrescue.persistence.mongo.impl
 
 import scala.concurrent.Future
 
-import com.emakarovas.animalrescue.persistence.mongo.Animal
-import com.emakarovas.animalrescue.persistence.mongo.CollectionCounter
 import com.emakarovas.animalrescue.persistence.mongo.Mongo
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionType
-import com.emakarovas.animalrescue.persistence.mongo.Offer
-import com.emakarovas.animalrescue.persistence.mongo.Search
-import com.emakarovas.animalrescue.persistence.mongo.User
 
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,11 +25,11 @@ class DefaultMongoCollectionFactory @Inject() (
   
   def getCollection(t: MongoCollectionType[_]): Future[BSONCollection] = {
     t match {
-      case Animal => getCollection(AnimalColName)
-      case CollectionCounter => getCollection(CollectionCounterColName)
-      case Offer => getCollection(OfferColName)
-      case Search => getCollection(SearchColName)
-      case User => getCollection(UserColName)
+      case MongoCollectionType.Animal => getCollection(AnimalColName)
+      case MongoCollectionType.CollectionCounter => getCollection(CollectionCounterColName)
+      case MongoCollectionType.Offer => getCollection(OfferColName)
+      case MongoCollectionType.Search => getCollection(SearchColName)
+      case MongoCollectionType.User => getCollection(UserColName)
     }
   }
 

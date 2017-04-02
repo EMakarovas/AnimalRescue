@@ -1,10 +1,5 @@
 package com.emakarovas.animalrescue.model.constants
 
-import com.emakarovas.animalrescue.model.enumeration.AnimalType
-import com.emakarovas.animalrescue.model.enumeration.Gender
-import java.util.Date
-import com.emakarovas.animalrescue.model.enumeration.SearchTerminationReason
-
 object SearchConstants {
   val Id = "id"
   val Url = "url"
@@ -19,9 +14,12 @@ object SearchConstants {
 
 object SearchAnimalConstants {
   val Id = "id"
-  val AnimalType = "animalType"
-  val SpecificType = "specificType"
+  val AnimalTypeDetails = "animalTypeDetails"
   val Gender = "gender"
+  val ColorSet = "colorSet"
+  val SizeSet = "sizeSet"
+  val TagSet = "tagSet"
+  val CastratedOnly = "castratedOnly"
   val MinAge = "minAge"
   val MaxAge = "maxAge"
   val PotentialAnimalIdList = "potentialAnimalIdList"

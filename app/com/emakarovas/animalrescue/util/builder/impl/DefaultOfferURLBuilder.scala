@@ -9,10 +9,11 @@ import com.emakarovas.animalrescue.model.AnimalModel
 @Singleton
 class DefaultOfferURLBuilder extends OfferURLBuilder {
   override def build(offer: OfferModel, firstAnimal: AnimalModel): String = {
-    val id = offer.id
-    val animalType = firstAnimal.animalType
-    val specificType = firstAnimal.specificType
-    s"$id-$animalType-$specificType"
+//    val id = offer.id
+//    val animalType = firstAnimal.animalType
+//    val specificType = firstAnimal.specificType
+//    s"$id-$animalType-$specificType"
+    "qq"
   }
   
 }

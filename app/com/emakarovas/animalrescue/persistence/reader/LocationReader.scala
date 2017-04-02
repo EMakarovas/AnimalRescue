@@ -1,9 +1,8 @@
 package com.emakarovas.animalrescue.persistence.reader
 
-import com.emakarovas.animalrescue.model.GeolocationModel
-import com.emakarovas.animalrescue.model.LocationModel
+import com.emakarovas.animalrescue.model.Geolocation
+import com.emakarovas.animalrescue.model.Location
 import com.emakarovas.animalrescue.model.constants.LocationConstants
-import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
 import com.emakarovas.animalrescue.persistence.dao.constants.MongoGeolocationConstants
 
 import javax.inject.Singleton
@@ -11,23 +10,22 @@ import reactivemongo.bson.BSONDocument
 import reactivemongo.bson.BSONDocumentReader
 
 @Singleton
-class LocationReader extends AbstractEntityReader[LocationModel] {
+class LocationReader extends AbstractEntityReader[Location] {
   
-  implicit object geolocationReader extends BSONDocumentReader[GeolocationModel] {
-    override def read(doc: BSONDocument): GeolocationModel = {
+  implicit object geolocationReader extends BSONDocumentReader[Geolocation] {
+    override def read(doc: BSONDocument): Geolocation = {
       val coordinates = doc.getAs[Seq[Double]](MongoGeolocationConstants.Coordinates).get
       val longitude = coordinates(0)
       val latitude = coordinates(1)
-      GeolocationModel(longitude, latitude)
+      Geolocation(longitude, latitude)
     }
   }
   
-  override def read(doc: BSONDocument): LocationModel = {
-    val id = doc.getAs[String](MongoConstants.MongoId).get
+  override def read(doc: BSONDocument): Location = {
     val country = doc.getAs[String](LocationConstants.Country).get
     val city = doc.getAs[String](LocationConstants.City).get
     val streetOpt = doc.getAs[String](LocationConstants.Street)
-    val geolocation = doc.getAs[GeolocationModel](LocationConstants.Geolocation).get
-    LocationModel(id, country, city, streetOpt, geolocation)
+    val geolocation = doc.getAs[Geolocation](LocationConstants.Geolocation).get
+    Location(country, city, streetOpt, geolocation)
   }
 }

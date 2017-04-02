@@ -10,16 +10,25 @@ sealed abstract class SearchUpdatableCollectionProperty[T](
     extends UpdatableCollectionProperty[SearchModel, T] with SearchProperty
     
 object SearchUpdatableCollectionProperty {
-  case class SearchAnimalListSpecificType(
-      override val entityId: String, override val value: Option[String])
-      extends SearchUpdatableCollectionProperty[Option[String]](entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.SpecificType, value)
-  case class SearchAnimalListGender(
-      override val entityId: String, override val value: Gender)
-      extends SearchUpdatableCollectionProperty[Gender](entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.Gender, value)
-  case class SearchAnimalListMinAge(
+  
+  case class SearchAnimalGender(
+      override val entityId: String, override val value: Option[Gender])
+      extends SearchUpdatableCollectionProperty[Option[Gender]](
+          entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.Gender, value)
+  
+  case class SearchAnimalCastratedOnly(
+      override val entityId: String, override val value: Boolean)
+      extends SearchUpdatableCollectionProperty[Boolean](
+          entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.CastratedOnly, value)
+      
+  case class SearchAnimalMinAge(
       override val entityId: String, override val value: Option[Int])
-      extends SearchUpdatableCollectionProperty[Option[Int]](entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.MinAge, value)
-  case class SearchAnimalListMaxAge(
+      extends SearchUpdatableCollectionProperty[Option[Int]](
+          entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.MinAge, value)
+  
+  case class SearchAnimalMaxAge(
       override val entityId: String, override val value: Option[Int])
-      extends SearchUpdatableCollectionProperty[Option[Int]](entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.MaxAge, value)
+      extends SearchUpdatableCollectionProperty[Option[Int]](
+          entityId, SearchConstants.SearchAnimalList, SearchAnimalConstants.MaxAge, value)
+
 }

@@ -9,7 +9,7 @@ import com.emakarovas.animalrescue.model.constants.UserConstants
 import com.emakarovas.animalrescue.persistence.dao.UserDAO
 import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
-import com.emakarovas.animalrescue.persistence.mongo.User
+import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionType
 import com.emakarovas.animalrescue.persistence.reader.UserReader
 import com.emakarovas.animalrescue.persistence.writer.UserWriter
 import com.emakarovas.animalrescue.persistence.writer.property.UserPropertyWriter
@@ -30,7 +30,7 @@ class DefaultUserDAO @Inject() (
   
   import scala.concurrent.ExecutionContext.Implicits.global
   
-  val collection = colFactory.getCollection(User)
+  val collection = colFactory.getCollection(MongoCollectionType.User)
   
   val indexList = List(
       buildIndex(UserConstants.Email, IndexType.Ascending, true),
@@ -41,7 +41,7 @@ class DefaultUserDAO @Inject() (
   setUpIndexes(indexList)
  
   override def findByEmail(email: String): Future[Option[UserModel]] = {
-    val selector = BSONDocument(MongoConstants.Data + "." + UserConstants.Email -> email)
+    val selector = BSONDocument(UserConstants.Email -> email)
     collection.flatMap(_.find(selector).one)
   }
   

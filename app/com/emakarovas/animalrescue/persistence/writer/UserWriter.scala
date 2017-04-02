@@ -42,14 +42,13 @@ class UserWriter @Inject() (
   override def write(user: UserModel): BSONDocument = {
     BSONDocument(
         MongoConstants.MongoId -> user.id,
-        MongoConstants.Data -> BSONDocument(
-            UserConstants.Email -> user.email,
-            UserConstants.HashedPassword -> user.hashedPassword,
-            UserConstants.Salt -> user.salt,
-            UserConstants.ActivationString -> user.activationString,
-            UserConstants.PasswordResetString -> user.passwordResetString,
-            UserConstants.Person -> user.person,
-            UserConstants.Settings -> user.settings))
+        UserConstants.Email -> user.email,
+        UserConstants.HashedPassword -> user.hashedPassword,
+        UserConstants.Salt -> user.salt,
+        UserConstants.ActivationString -> user.activationString,
+        UserConstants.PasswordResetString -> user.passwordResetString,
+        UserConstants.Person -> user.person,
+        UserConstants.Settings -> user.settings)
   }
   
 }

@@ -14,29 +14,18 @@ import reactivemongo.api.indexes.Index
 trait AbstractModelDAO[T <: AbstractModel] extends AbstractDAO[T] {
   
   import scala.concurrent.ExecutionContext.Implicits.global
-  
-  protected val createList: ListBuffer[T] = ListBuffer.empty[T]
-  
+    
   def findById(id: String): Future[Option[T]] = {
-    val filteredList = createList.filter((obj) => obj.id==id)
-    if(filteredList.size==1)
-      return Future { Some(filteredList(0)) }
     val query = BSONDocument(MongoConstants.MongoId -> id)
     collection.flatMap(_.find(query).one)
   }
   
-  def findAll(): Future[List[T]] = {
-    val f = collection.flatMap(_.find(BSONDocument()).cursor[T]().collect[List](Int.MaxValue, Cursor.FailOnError[List[T]]()))
-    f.map((list) => (list ++ createList).distinct)
+  def findAll(count: Int): Future[List[T]] = {
+    collection.flatMap(_.find(BSONDocument()).cursor[T]().collect[List](count, Cursor.FailOnError[List[T]]()))
   }
   
   def create(obj: T): Future[Int] = {
-    createList += obj
-    val f = collection.flatMap(_.insert(obj))
-    f onSuccess {
-      case _ => createList -= obj
-    }
-    f.map(writeRes => writeRes.n)
+    collection.flatMap(_.insert(obj)).map(writeRes => writeRes.n)
   }
   
   def deleteById(id: String): Future[Int] = {
@@ -45,7 +34,7 @@ trait AbstractModelDAO[T <: AbstractModel] extends AbstractDAO[T] {
   }
   
   def buildIndex(name: String, iType: IndexType, unique: Boolean): Index = {
-    val key = Seq((MongoConstants.Data + "." + name, iType))
+    val key = Seq((name, iType))
     Index(key, Some(name), unique)
   }
   

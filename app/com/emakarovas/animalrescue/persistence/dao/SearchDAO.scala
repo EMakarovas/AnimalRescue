@@ -3,9 +3,10 @@ package com.emakarovas.animalrescue.persistence.dao
 import scala.concurrent.Future
 
 import com.emakarovas.animalrescue.model.SearchModel
+import com.emakarovas.animalrescue.model.enumeration.Animal
+import com.emakarovas.animalrescue.model.enumeration.SpecificType
 import com.google.inject.ImplementedBy
 import com.emakarovas.animalrescue.persistence.dao.impl.DefaultSearchDAO
-import com.emakarovas.animalrescue.model.CommentModel
 
 @ImplementedBy(classOf[DefaultSearchDAO])
 trait SearchDAO extends AbstractUpdatableModelDAO[SearchModel] {
@@ -18,4 +19,6 @@ trait SearchDAO extends AbstractUpdatableModelDAO[SearchModel] {
    * @param potentialAnimalId The ID of the AnimalModel that was matched
    */
   def addToPotentialAnimalIdListBySearchAnimalId(id: String, searchAnimalId: String, potentialAnimalId: String): Future[Int]
+  def addSpecificTypeById(id: String, offerAnimalId: String, specificType: SpecificType[_ <: Animal]): Future[Int]
+  def removeSpecificTypeById(id: String, offerAnimalId: String, specificType: SpecificType[_ <: Animal]): Future[Int]
 }

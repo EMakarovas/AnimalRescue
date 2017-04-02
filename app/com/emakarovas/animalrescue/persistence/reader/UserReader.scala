@@ -2,7 +2,7 @@ package com.emakarovas.animalrescue.persistence.reader
 
 import com.emakarovas.animalrescue.model.AccountSettingsModel
 import com.emakarovas.animalrescue.model.ImageModel
-import com.emakarovas.animalrescue.model.LocationModel
+import com.emakarovas.animalrescue.model.Location
 import com.emakarovas.animalrescue.model.PersonModel
 import com.emakarovas.animalrescue.model.UserModel
 import com.emakarovas.animalrescue.model.constants.AccountSettingsConstants
@@ -31,7 +31,7 @@ class UserReader @Inject() (
       val gender = doc.getAs[Gender](PersonConstants.Gender).get
       val phoneNumberOpt = doc.getAs[String](PersonConstants.PhoneNumber)
       val imageOpt = doc.getAs[ImageModel](PersonConstants.Image)
-      val location = doc.getAs[LocationModel](PersonConstants.Location).get
+      val location = doc.getAs[Location](PersonConstants.Location).get
       PersonModel(id, name, surnameOpt, gender, phoneNumberOpt, imageOpt, location)
     }
   }
@@ -43,9 +43,8 @@ class UserReader @Inject() (
     }
   }
   
-  override def read(topDoc: BSONDocument): UserModel = {
-    val id = topDoc.getAs[String](MongoConstants.MongoId).get
-    val doc = topDoc.getAs[BSONDocument](MongoConstants.Data).get
+  override def read(doc: BSONDocument): UserModel = {
+    val id = doc.getAs[String](MongoConstants.MongoId).get
     val email = doc.getAs[String](UserConstants.Email).get
     val hashedPassword = doc.getAs[String](UserConstants.HashedPassword).get
     val saltOpt = doc.getAs[String](UserConstants.Salt)

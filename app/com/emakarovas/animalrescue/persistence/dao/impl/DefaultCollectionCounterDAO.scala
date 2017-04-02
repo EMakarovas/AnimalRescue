@@ -10,8 +10,8 @@ import com.emakarovas.animalrescue.model.constants.CollectionCounterConstants
 import com.emakarovas.animalrescue.model.enumeration.ModelType
 import com.emakarovas.animalrescue.persistence.dao.CollectionCounterDAO
 import com.emakarovas.animalrescue.persistence.dao.constants.MongoConstants
-import com.emakarovas.animalrescue.persistence.mongo.CollectionCounter
 import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionFactory
+import com.emakarovas.animalrescue.persistence.mongo.MongoCollectionType
 import com.emakarovas.animalrescue.persistence.reader.CollectionCounterReader
 import com.emakarovas.animalrescue.persistence.writer.CollectionCounterWriter
 import com.emakarovas.animalrescue.persistence.writer.enumeration.ModelTypeWriter
@@ -28,7 +28,7 @@ class DefaultCollectionCounterDAO @Inject() (
     implicit override val writer: CollectionCounterWriter,
     implicit val modelTypeWriter: ModelTypeWriter) extends CollectionCounterDAO {
   
-  val collection = colFactory.getCollection(CollectionCounter)
+  val collection = colFactory.getCollection(MongoCollectionType.CollectionCounter)
  
   import scala.concurrent.ExecutionContext.Implicits.global
     

@@ -12,12 +12,16 @@ import com.emakarovas.animalrescue.persistence.writer.enumeration.SearchTerminat
 import javax.inject.Inject
 import javax.inject.Singleton
 import reactivemongo.bson.BSONDocument
+import com.emakarovas.animalrescue.persistence.writer.enumeration.SizeWriter
+import com.emakarovas.animalrescue.persistence.writer.enumeration.ColorWriter
 
 @Singleton
 class SearchAnimalWriter @Inject() (
-    implicit private val animalTypeWriter: AnimalTypeWriter,
+    implicit private val animalTypeDetailsWriter: AnimalTypeDetailsWriter,
     implicit private val genderWriter: GenderWriter,
-    implicit val searchTerminationReasonEnumWriter: SearchTerminationReasonWriter)
+    implicit val searchTerminationReasonEnumWriter: SearchTerminationReasonWriter,
+    implicit val colorWriter: ColorWriter,
+    implicit val sizeWriter: SizeWriter)
       extends AbstractEntityWriter[SearchAnimalModel] {
       
   implicit object searchTerminationReasonWriter extends AbstractEntityWriter[SearchTerminationReasonModel] {
@@ -31,9 +35,11 @@ class SearchAnimalWriter @Inject() (
   override def write(searchAnimal: SearchAnimalModel): BSONDocument = {
     BSONDocument(
         MongoConstants.MongoId -> searchAnimal.id,
-        SearchAnimalConstants.AnimalType -> searchAnimal.animalType,
-        SearchAnimalConstants.SpecificType -> searchAnimal.specificType,
+        SearchAnimalConstants.AnimalTypeDetails -> animalTypeDetailsWriter.write(searchAnimal.animalTypeDetails),
         SearchAnimalConstants.Gender -> searchAnimal.gender,
+        SearchAnimalConstants.ColorSet -> searchAnimal.colorSet,
+        SearchAnimalConstants.SizeSet -> searchAnimal.sizeSet,
+        SearchAnimalConstants.TagSet -> searchAnimal.tagSet,
         SearchAnimalConstants.MinAge -> searchAnimal.minAge,
         SearchAnimalConstants.MaxAge -> searchAnimal.maxAge,
         SearchAnimalConstants.PotentialAnimalIdList -> searchAnimal.potentialAnimalIdList,

@@ -6,5 +6,14 @@ object OfferTerminationReason extends Enum[OfferTerminationReason] {
   case object GaveToSomeoneElse extends OfferTerminationReason
   case object KeptIt extends OfferTerminationReason
   case object Other extends OfferTerminationReason
+  
+  def valueOf(value: String) = value match {
+    case "GaveToUser" => GaveToUser
+    case "GaveToSomeoneElse" => GaveToSomeoneElse
+    case "KeptIt" => KeptIt
+    case "Other" => Other
+    case _ => throw new EnumerationNotFoundException()
+  }
+  
 }
   

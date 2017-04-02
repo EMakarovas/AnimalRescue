@@ -9,8 +9,10 @@ import com.emakarovas.animalrescue.model.UserModel
 
 sealed trait MongoCollectionType[T <: AbstractPersistableEntity]
 
-final case object Animal extends MongoCollectionType[AnimalModel]
-final case object CollectionCounter extends MongoCollectionType[CollectionCounterEntity]
-final case object Offer extends MongoCollectionType[OfferModel]
-final case object Search extends MongoCollectionType[SearchModel]
-final case object User extends MongoCollectionType[UserModel]
+object MongoCollectionType {
+  final case object Animal extends MongoCollectionType[AnimalModel]
+  final case object CollectionCounter extends MongoCollectionType[CollectionCounterEntity]
+  final case object Offer extends MongoCollectionType[OfferModel]
+  final case object Search extends MongoCollectionType[SearchModel]
+  final case object User extends MongoCollectionType[UserModel]
+}

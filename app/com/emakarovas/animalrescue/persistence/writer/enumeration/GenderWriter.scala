@@ -1,10 +1,9 @@
 package com.emakarovas.animalrescue.persistence.writer.enumeration
 
-import reactivemongo.bson.BSONString
-import reactivemongo.bson.BSONWriter
+import com.emakarovas.animalrescue.model.enumeration.Gender
 
 import javax.inject.Singleton
-import com.emakarovas.animalrescue.model.enumeration.Gender
+import reactivemongo.bson.BSONString
 
 @Singleton
 class GenderWriter extends EnumerationWriter[Gender] {

@@ -8,18 +8,10 @@ import reactivemongo.bson.BSONString
 import reactivemongo.bson.BSONValue
 
 @Singleton
-class ModelTypeReader extends EnumerationReader[ModelType[AbstractModel]] {
-  override def read(bson: BSONValue): ModelType[AbstractModel] =
+class ModelTypeReader extends EnumerationReader[ModelType[_ <: AbstractModel]] {
+  override def read(bson: BSONValue): ModelType[_ <: AbstractModel] =
     bson match {
-      case BSONString("Animal") => ModelType.Animal
-      case BSONString("Comment") => ModelType.Comment
-      case BSONString("Image") => ModelType.Image
-      case BSONString("Location") => ModelType.Location
-      case BSONString("Offer") => ModelType.Offer
-      case BSONString("Search") => ModelType.Search
-      case BSONString("SearchAnimal") => ModelType.SearchAnimal
-      case BSONString("User") => ModelType.User
-      case BSONString("Person") => ModelType.Person
-      case _ => throw new EnumerationNotFoundException
+      case BSONString(str) => ModelType.valueOf(str)
+      case _ => throw new IllegalBSONValueException()
     }
 }

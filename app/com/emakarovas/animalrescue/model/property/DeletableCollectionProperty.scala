@@ -13,11 +13,17 @@ import com.emakarovas.animalrescue.model.OfferModel
  */
 abstract class DeletableCollectionProperty[T <: AbstractModel with AbstractPersistableEntity, +V] extends Property[T] {
   /**
-   *  The ID of the entity stored in a collection
+   * The field used to identify the entity inside the collection.
+   * Can be None if the value itself is an identifier (e.g. array of enums)
    */
-  def entityId: String
+  def idField: Option[String]
+  /**
+   *  The identification field value
+   */
+  def entityIdentifier: V
   /**
    * The name of the collection inside the parent entity 
    */
   def collectionName: String
 }
+

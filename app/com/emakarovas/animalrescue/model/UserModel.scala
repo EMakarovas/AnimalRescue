@@ -19,7 +19,7 @@ case class PersonModel
    gender: Gender,
    phoneNumber: Option[String],
    image: Option[ImageModel],
-   location: LocationModel) 
+   location: Location) 
    extends AbstractModel(id)
 
 case class AccountSettingsModel

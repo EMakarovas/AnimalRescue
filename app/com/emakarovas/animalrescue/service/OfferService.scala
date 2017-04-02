@@ -3,7 +3,7 @@ package com.emakarovas.animalrescue.service
 import scala.concurrent.Future
 
 import com.emakarovas.animalrescue.model.ImageModel
-import com.emakarovas.animalrescue.model.LocationModel
+import com.emakarovas.animalrescue.model.Location
 import com.emakarovas.animalrescue.model.OfferModel
 import com.emakarovas.animalrescue.model.VideoModel
 import com.google.inject.ImplementedBy
@@ -15,7 +15,7 @@ trait OfferService {
       text: String, 
       image: Option[ImageModel], 
       video: Option[VideoModel], 
-      location: LocationModel, 
+      location: Location, 
       userId: String): Future[Unit]
   def findByUserId(userId: String): Future[List[OfferModel]]
 }
