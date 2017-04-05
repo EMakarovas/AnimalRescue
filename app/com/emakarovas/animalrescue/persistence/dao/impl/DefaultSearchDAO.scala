@@ -81,9 +81,8 @@ class DefaultSearchDAO @Inject() (
         MongoConstants.MongoId -> id,
         OfferConstants.OfferAnimalList -> BSONDocument(
             "$elemMatch" -> BSONDocument(
-                MongoConstants.MongoId -> offerAnimalId)),
-        OfferConstants.OfferAnimalList + ".$."
-          + OfferAnimalConstants.AnimalTypeDetails + "." + AnimalTypeDetailsConstants.AnimalType -> animalType)
+                MongoConstants.MongoId -> offerAnimalId,
+                OfferAnimalConstants.AnimalTypeDetails + "." + AnimalTypeDetailsConstants.AnimalType -> animalType)))
     val update = BSONDocument(
         "$addToSet" -> BSONDocument(
             OfferConstants.OfferAnimalList + ".$." + OfferAnimalConstants.AnimalTypeDetails + "." + AnimalTypeDetailsConstants.SpecificTypeSet -> specificTypeWriter.write(specificType)))
@@ -97,9 +96,8 @@ class DefaultSearchDAO @Inject() (
         MongoConstants.MongoId -> id,
         OfferConstants.OfferAnimalList -> BSONDocument(
             "$elemMatch" -> BSONDocument(
-                MongoConstants.MongoId -> offerAnimalId)),
-        OfferConstants.OfferAnimalList + ".$."
-          + OfferAnimalConstants.AnimalTypeDetails + "." + AnimalTypeDetailsConstants.AnimalType -> animalType)
+                MongoConstants.MongoId -> offerAnimalId,
+                OfferAnimalConstants.AnimalTypeDetails + "." + AnimalTypeDetailsConstants.AnimalType -> animalType)))
     val update = BSONDocument(
         "$pull" -> BSONDocument(
             OfferConstants.OfferAnimalList + ".$." + OfferAnimalConstants.AnimalTypeDetails + "." + AnimalTypeDetailsConstants.SpecificTypeSet -> specificTypeWriter.write(specificType)))

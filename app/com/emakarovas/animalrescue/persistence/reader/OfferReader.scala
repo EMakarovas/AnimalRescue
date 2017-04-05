@@ -28,6 +28,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import reactivemongo.bson.BSONDocument
 import reactivemongo.bson.BSONDocumentReader
+import reactivemongo.bson.BSONArray
 
 @Singleton
 class OfferReader @Inject() (
@@ -41,7 +42,7 @@ class OfferReader @Inject() (
     implicit val colorReader: ColorReader,
     implicit val sizeReader: SizeReader) extends AbstractEntityReader[OfferModel] {
   
-    implicit object offerTerminationReasonReader extends BSONDocumentReader[OfferTerminationReasonModel] {
+  implicit object offerTerminationReasonReader extends BSONDocumentReader[OfferTerminationReasonModel] {
     override def read(doc: BSONDocument): OfferTerminationReasonModel = {
       val offerTerminationReason = doc.getAs[OfferTerminationReason](OfferTerminationReasonConstants.OfferTerminationReason).get
       val textOpt = doc.getAs[String](OfferTerminationReasonConstants.Text)
@@ -52,7 +53,7 @@ class OfferReader @Inject() (
   implicit object offerAnimalReader extends BSONDocumentReader[OfferAnimalModel] {
     override def read(doc: BSONDocument): OfferAnimalModel = {
       val id = doc.getAs[String](MongoConstants.MongoId).get
-      val animalTypeDetails = doc.getAs[AnimalTypeDetails[_ <: Animal]](OfferAnimalConstants.AnimalTypeDetails).get
+      val animalTypeDetails = doc.getAs[AnimalTypeDetails[_ <: Animal]](OfferAnimalConstants.AnimalTypeDetails)(animalTypeDetailsReader).get
       val genderOpt = doc.getAs[Gender](OfferAnimalConstants.Gender)
       val nameOpt = doc.getAs[String](OfferAnimalConstants.Name)
       val age = doc.getAs[Int](OfferAnimalConstants.Age).get
@@ -78,7 +79,7 @@ class OfferReader @Inject() (
     val url = doc.getAs[String](OfferConstants.Url).get
     val startDate = doc.getAs[Date](OfferConstants.StartDate).get
     val endDate = doc.getAs[Date](OfferConstants.EndDate)
-    val offerAnimalList = doc.getAs[List[OfferAnimalModel]](OfferConstants.OfferAnimalList).get
+    val offerAnimalList = doc.getAs[List[OfferAnimalModel]]("offerAnimalList").toList.flatten
     val text = doc.getAs[String](OfferConstants.Text).get
     val imageOpt = doc.getAs[ImageModel](OfferConstants.Image)
     val videoOpt = doc.getAs[VideoModel](OfferConstants.Video)

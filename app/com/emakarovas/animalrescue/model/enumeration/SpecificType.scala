@@ -70,6 +70,10 @@ object SpecificType extends Enum[SpecificType[_]] {
   case object CockerSpaniel extends DogSpecificType
   case object GoldenRetriever extends DogSpecificType
   case object Poodle extends DogSpecificType
+  
+  // Pig
+  case object PotBelliedPig extends PigSpecificType
+  case object MiniaturePig extends PigSpecificType
 
   // Any
   case object Unspecified extends SpecificType[Animal] {
@@ -82,6 +86,8 @@ object SpecificType extends Enum[SpecificType[_]] {
     case "CockerSpaniel" => CockerSpaniel
     case "GoldenRetriever" => GoldenRetriever
     case "Poodle" => Poodle
+    case "PotBelliedPig" => PotBelliedPig
+    case "MiniaturePig" => MiniaturePig
     case "Unspecified" => Unspecified
     case _ => throw new EnumerationNotFoundException()
   }
