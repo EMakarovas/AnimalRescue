@@ -6,4 +6,4 @@ import com.emakarovas.animalrescue.model.enumeration.SpecificType
 
 case class AnimalTypeDetails[T <: Animal](
    animalType: AnimalType[T],
-   specificTypeSet: Set[_ <: SpecificType[T]]) extends AbstractEntity
+   specificTypeSet: Set[SpecificType[T]]) extends AbstractEntity

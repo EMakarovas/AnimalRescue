@@ -33,6 +33,8 @@ import com.emakarovas.animalrescue.testutil.TestUtils
 import play.api.test.Helpers.await
 import play.api.test.Helpers.defaultAwaitTimeout
 import scala.collection.mutable.ArrayBuffer
+import com.emakarovas.animalrescue.persistence.dao.search.OfferSearchAgeBoundaries
+import com.emakarovas.animalrescue.persistence.dao.search.OfferSearch
 
 class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
   
@@ -41,14 +43,14 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       "offer text 1", 
       List(
           OfferAnimalModel("offer animal id 1", 
-              AnimalTypeDetails(AnimalType.Pig, Set(SpecificType.PotBelliedPig, SpecificType.MiniaturePig)),
+              AnimalTypeDetails(AnimalType.Pig, Set[SpecificType[Animal.Pig]](SpecificType.PotBelliedPig, SpecificType.MiniaturePig)),
               Some(Gender.Female), Some("pinkie 11"), 11, Some("description 1"), 
               Set(Color.Pink), Size.Small, Set("Cute", "Fat"), true, 
               Some(ImageModel("img id 1", "img url 1")), Some(VideoModel("vid id 1", "vid url 1")),
               Some(11.1), Some(12.1), Some(13.1), Some(14.1),
               Some(OfferTerminationReasonModel(OfferTerminationReason.Other, Some("text 1")))),
           OfferAnimalModel("offer animal id 11", 
-              AnimalTypeDetails(AnimalType.Pig, Set()),
+              AnimalTypeDetails(AnimalType.Pig, Set[SpecificType[Animal.Pig]]()),
               Some(Gender.Female), Some("other pig 21"), 15, Some("description 11"),
               Set(Color.Brown), Size.Medium, Set("Evil", "Noisy"), false,
               Some(ImageModel("img id 11", "img url 11")), Some(VideoModel("vid id 11", "vid url 11")),
@@ -73,16 +75,16 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       "offer text 3", 
       List(
           OfferAnimalModel("offer animal id 3", 
-              AnimalTypeDetails(AnimalType.Dog, Set(SpecificType.CockerSpaniel)),
+              AnimalTypeDetails(AnimalType.Dog, Set[SpecificType[Animal.Dog]](SpecificType.CockerSpaniel)),
               None, None, 33, Some("description 3"), 
               Set(Color.Black), Size.Medium, Set(), false, 
               Some(ImageModel("img id 3", "img url 3")), Some(VideoModel("vid id 3", "vid url 3")),
               Some(33.3), Some(32.3), Some(33.3), Some(34.3),
               Some(OfferTerminationReasonModel(OfferTerminationReason.Other, Some("text 3")))),
           OfferAnimalModel("offer animal id 33", 
-              AnimalTypeDetails(AnimalType.Dog, Set()),
+              AnimalTypeDetails(AnimalType.Dog, Set[SpecificType[Animal.Dog]]()),
               Some(Gender.Female), Some("other pig 23"), 35, Some("description 33"),
-              Set(Color.Brown), Size.Medium, Set("Evil", "Noisy"), false,
+              Set(Color.Brown), Size.Medium, Set("Evil", "Noisy"), true,
               Some(ImageModel("img id 33", "img url 33")), Some(VideoModel("vid id 33", "vid url 33")),
               Some(3333.33), Some(332.33), Some(333.33), Some(334.33),
               Some(OfferTerminationReasonModel(OfferTerminationReason.Other, Some("text 33"))))),
@@ -269,7 +271,7 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val newComment = CommentModel("comment id 155", TestUtils.buildDate(3, 3, 2018), "comment text 14", Some("comment name 12"), 
           Some("comment user id 15555"))
       val newAnimal = OfferAnimalModel("offer animal id 888", 
-              AnimalTypeDetails(AnimalType.Pig, Set()),
+              AnimalTypeDetails(AnimalType.Pig, Set[SpecificType[Animal.Pig]]()),
               Some(Gender.Male), Some("pinkie 71"), 11, Some("description 1333"), 
               Set(), Size.Small, Set(), false, 
               Some(ImageModel("img id 1", "img url 1")), Some(VideoModel("vid id 1", "vid url 1")),
@@ -690,7 +692,7 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val deleteSpecificType = SpecificType.Poodle
       val oldTypeDetails = oldAnimal.animalTypeDetails
       val newTypeDetails = oldTypeDetails.copy(
-          specificTypeSet = Set[SpecificType[Animal.Dog]]()
+          specificTypeSet = Set[SpecificType[Animal]]()
       )
       
       val newAnimal = oldAnimal.copy(animalTypeDetails = newTypeDetails)
@@ -734,18 +736,194 @@ class DefaultOfferDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
     "find corresponding OfferModels with OfferAnimalModels when findByOfferSearch is called" in {
       delay()
       
-      val map = scala.collection.mutable.Map[String, List[OfferAnimalModel]]().empty
       val offerList = List(offer1, offer2, offer3)
-      for(offer <- offerList; animal <- offer.offerAnimalList) {
-        val exists = map.contains(offer.id)
-        if(exists) {
-          val list = map.get(offer.id).get
-          val newList = list ++ List(animal)
-          map.put(offer.id, newList) 
-        } else {
-          map.put(offer.id, List(animal))
+      val offerAnimalList = offerList.flatMap(offer => offer.offerAnimalList)
+
+      // find by AnimalType
+      val search1 = OfferSearch(Some(AnimalType.Pig), Set[SpecificType[Animal.Pig]](), 
+          None, Set(), Set(), Set(), Set(), Set(), OfferSearchAgeBoundaries(0, 1000), false)
+      val searchF1 = defaultOfferDAO.findByOfferSearch(search1, 10);
+      await(searchF1)
+      searchF1 onSuccess {
+        case list => {
+          val foundAnimalList = list.flatMap(offer => offer.offerAnimalList)
+          val expectedAnimalList = offerAnimalList.filter(animal => {
+            animal.animalTypeDetails.animalType==AnimalType.Pig && animal.age>=0 && animal.age<=1000
+            })
+          foundAnimalList.size mustBe expectedAnimalList.size
+          for(expectedAnimal <- expectedAnimalList) {
+              foundAnimalList.contains(expectedAnimal) mustBe true
+          }
         }
       }
+      
+      // find by SpecificType
+      val search2 = OfferSearch(None, Set[SpecificType[Animal.Dog]](SpecificType.CockerSpaniel),
+          None, Set(), Set(), Set(), Set(), Set(), OfferSearchAgeBoundaries(0, 1000), false)
+      val searchF2 = searchF1.flatMap(_ => defaultOfferDAO.findByOfferSearch(search2, 10));
+      await(searchF2)
+      searchF2 onSuccess {
+        case list => {
+          val foundAnimalList = list.flatMap(offer => offer.offerAnimalList)
+          val expectedAnimalList = offerAnimalList.filter(animal => {
+            val typeDetails = animal.animalTypeDetails
+            typeDetails.asInstanceOf[AnimalTypeDetails[Animal.Dog]].specificTypeSet.contains(SpecificType.CockerSpaniel) && 
+            animal.age>=0 && animal.age<=1000
+          })
+          foundAnimalList.size mustBe expectedAnimalList.size
+          for(expectedAnimal <- expectedAnimalList) {
+              foundAnimalList.contains(expectedAnimal) mustBe true
+          }
+        }
+      }
+      
+      // find by Gender
+      val search3 = OfferSearch(None, Set[SpecificType[Animal]](),
+          Some(Gender.Male), Set(), Set(), Set(), Set(), Set(), OfferSearchAgeBoundaries(0, 1000), false)
+      val searchF3 = searchF2.flatMap(_ => defaultOfferDAO.findByOfferSearch(search3, 10));
+      await(searchF3)
+      searchF3 onSuccess {
+        case list => {
+          val foundAnimalList = list.flatMap(offer => offer.offerAnimalList)
+          val expectedAnimalList = offerAnimalList.filter(animal => {
+            animal.gender.getOrElse(None)==Gender.Male &&
+            animal.age>=0 && animal.age<=1000
+          })
+          foundAnimalList.size mustBe expectedAnimalList.size
+          for(expectedAnimal <- expectedAnimalList) {
+              foundAnimalList.contains(expectedAnimal) mustBe true
+          }
+        }
+      }
+      
+      // find by Color
+      val search4 = OfferSearch(None, Set[SpecificType[Animal]](),
+          None, Set(Color.Black), Set(), Set(), Set(), Set(), OfferSearchAgeBoundaries(0, 1000), false)
+      val searchF4 = searchF3.flatMap(_ => defaultOfferDAO.findByOfferSearch(search4, 10));
+      await(searchF4)
+      searchF4 onSuccess {
+        case list => {
+          val foundAnimalList = list.flatMap(offer => offer.offerAnimalList)
+          val expectedAnimalList = offerAnimalList.filter(animal => {
+            animal.colorSet.contains(Color.Black) &&
+            animal.age>=0 && animal.age<=1000
+          })
+          foundAnimalList.size mustBe expectedAnimalList.size
+          for(expectedAnimal <- expectedAnimalList) {
+              foundAnimalList.contains(expectedAnimal) mustBe true
+          }
+        }
+      }
+      
+      // find by Size
+      val search5 = OfferSearch(None, Set[SpecificType[Animal]](),
+          None, Set(), Set(Size.Medium), Set(), Set(), Set(), OfferSearchAgeBoundaries(0, 1000), false)
+      val searchF5 = searchF4.flatMap(_ => defaultOfferDAO.findByOfferSearch(search5, 10));
+      await(searchF5)
+      searchF5 onSuccess {
+        case list => {
+          val foundAnimalList = list.flatMap(offer => offer.offerAnimalList)
+          val expectedAnimalList = offerAnimalList.filter(animal => {
+            animal.size==Size.Medium &&
+            animal.age>=0 && animal.age<=1000
+          })
+          foundAnimalList.size mustBe expectedAnimalList.size
+          for(expectedAnimal <- expectedAnimalList) {
+              foundAnimalList.contains(expectedAnimal) mustBe true
+          }
+        }
+      }
+      
+      // find by Tag
+      val search6 = OfferSearch(None, Set[SpecificType[Animal]](),
+          None, Set(), Set(), Set("Evil"), Set(), Set(), OfferSearchAgeBoundaries(0, 1000), false)
+      val searchF6 = searchF5.flatMap(_ => defaultOfferDAO.findByOfferSearch(search6, 10));
+      await(searchF6)
+      searchF6 onSuccess {
+        case list => {
+          val foundAnimalList = list.flatMap(offer => offer.offerAnimalList)
+          val expectedAnimalList = offerAnimalList.filter(animal => {
+            animal.tagSet.contains("Evil") &&
+            animal.age>=0 && animal.age<=1000
+          })
+          foundAnimalList.size mustBe expectedAnimalList.size
+          for(expectedAnimal <- expectedAnimalList) {
+              foundAnimalList.contains(expectedAnimal) mustBe true
+          }
+        }
+      }
+      
+      // find by Country
+      val search7 = OfferSearch(None, Set[SpecificType[Animal]](),
+          None, Set(), Set(), Set(), Set("country 2"), Set(), OfferSearchAgeBoundaries(0, 10000), false)
+      val searchF7 = searchF6.flatMap(_ => defaultOfferDAO.findByOfferSearch(search7, 10));
+      await(searchF7)
+      searchF7 onSuccess {
+        case list => {
+          val expectedList = offerList.filter(offer => {
+            offer.location.country=="country 2"
+          })
+          list.size mustBe expectedList.size
+          for(expectedOffer <- expectedList) {
+            list.contains(expectedOffer) mustBe true
+          }
+        }
+      }
+      
+      // find by City
+      val search8 = OfferSearch(None, Set[SpecificType[Animal]](),
+          None, Set(), Set(), Set(), Set(), Set("city 3"), OfferSearchAgeBoundaries(0, 10000), false)
+      val searchF8 = searchF7.flatMap(_ => defaultOfferDAO.findByOfferSearch(search8, 10));
+      await(searchF8)
+      searchF8 onSuccess {
+        case list => {
+          val expectedList = offerList.filter(offer => {
+            offer.location.city=="city 3"
+          })
+          list.size mustBe expectedList.size
+          for(expectedOffer <- expectedList) {
+            list.contains(expectedOffer) mustBe true
+          }
+        }
+      }
+      
+      // find by age
+      val search9 = OfferSearch(None, Set[SpecificType[Animal]](),
+          None, Set(), Set(), Set(), Set(), Set(), OfferSearchAgeBoundaries(0, 40), false)
+      val searchF9 = searchF8.flatMap(_ => defaultOfferDAO.findByOfferSearch(search9, 10));
+      await(searchF9)
+      searchF9 onSuccess {
+        case list => {
+          val foundAnimalList = list.flatMap(offer => offer.offerAnimalList)
+          val expectedAnimalList = offerAnimalList.filter(animal => {
+            animal.age>=0 && animal.age<=40
+          })
+          foundAnimalList.size mustBe expectedAnimalList.size
+          for(expectedAnimal <- expectedAnimalList) {
+              foundAnimalList.contains(expectedAnimal) mustBe true
+          }
+        }
+      }
+      
+      // find by isCastrated
+      val search10 = OfferSearch(None, Set[SpecificType[Animal]](),
+          None, Set(), Set(), Set(), Set(), Set(), OfferSearchAgeBoundaries(0, 1000), true)
+      val searchF10 = searchF9.flatMap(_ => defaultOfferDAO.findByOfferSearch(search10, 10));
+      await(searchF10)
+      searchF10 onSuccess {
+        case list => {
+          val foundAnimalList = list.flatMap(offer => offer.offerAnimalList)
+          val expectedAnimalList = offerAnimalList.filter(animal => {
+            animal.isCastrated &&
+            animal.age>=0 && animal.age<=1000
+          })
+          foundAnimalList.size mustBe expectedAnimalList.size
+          for(expectedAnimal <- expectedAnimalList) {
+              foundAnimalList.contains(expectedAnimal) mustBe true
+          }
+        }
+      }
+      
     }
     
     "add to viewedBy set when addToViewedByUserIdSetById is called if it doesn't exist yet" in {

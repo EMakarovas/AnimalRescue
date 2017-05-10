@@ -396,7 +396,7 @@ class DefaultAnimalDAOSpec extends DelayedPlaySpec with OneAppPerSuite {
       val deleteSpecificType = SpecificType.Poodle
       val oldTypeDetails = animal1.animalTypeDetails
       val newTypeDetails = oldTypeDetails.copy(
-          specificTypeSet = Set[SpecificType[Animal.Dog]](SpecificType.CockerSpaniel, SpecificType.GoldenRetriever)
+          specificTypeSet = Set[SpecificType[Animal]](SpecificType.CockerSpaniel, SpecificType.GoldenRetriever)
       )
       
       animal1 = animal1.copy(animalTypeDetails = newTypeDetails)

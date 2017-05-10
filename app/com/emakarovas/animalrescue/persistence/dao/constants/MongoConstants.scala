@@ -4,4 +4,6 @@ object MongoConstants {
   val MongoId = "_id"
 
   val Version = "version"  
+  
+  val OfferAnimalFilterAlias = "animal"
 }
